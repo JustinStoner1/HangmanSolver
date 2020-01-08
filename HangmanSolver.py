@@ -51,7 +51,7 @@ def getPossibleWordsFromGame(board, incorrectGuesses, dictionary):
     return dictionary[dictionary.words.str.match(regex)]
 
 
-def rankLettersByFreq(words):
+def findLetterFrequency(words):
     """
     Calculates the frequency that letters appear in the dataframe of words given
     :param words: List of words to analyze
@@ -85,7 +85,7 @@ def rankPossibleGuessesByFrequency(board, incorrectGuesses, dictionary):
     usedLetters = incorrectGuesses+[letter for letter in board if letter != "_"]
 
     possibleWords = getPossibleWordsFromGame(board, incorrectGuesses, dictionary)
-    results = rankLettersByFreq(possibleWords)
+    results = findLetterFrequency(possibleWords)
 
     freqs = results[0]
     letterCount = results[1]
@@ -129,7 +129,7 @@ print(possibilities2, "w/ incorrect guesses:")
 
 print(possibilities1-possibilities2, "fewer possibilities")
 
-letterFreqs = rankLettersByFreq(alg1)
+letterFreqs = findLetterFrequency(alg1)
 print("letter totals:", letterFreqs)
 
 letterRanks = rankPossibleGuessesByFrequency(testBoard, badGuesses, dictionary2)
