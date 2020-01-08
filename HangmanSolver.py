@@ -4,7 +4,7 @@ import pandas
 
 def loadDictionary(filePath):
     """
-
+    Loads a dictionary txt file where each line is assumed to be a word
     :param filePath: dictionary text file where each line is another word
     :return: a dataframe made from the dictionary file
     """
@@ -23,7 +23,10 @@ def getPossibleWordsFromBoard(board, dictionary):
     :param dictionary: the dictionary the hangman word is believed to be from
     :return: all possible words that could be the secret word bases on the correct guesses and size of the secret word
     """
-    regex = "(?="+board.replace('_', '.')+")(?=\\b\\w{"+str(len(board))+"}\\b)"  # Match words to correct guesses and secret word size
+    # Match words to correct guesses and secret word size
+
+    regex = "(?="+board.replace('_', '.')+")(?=\\b\\w{"+str(len(board))+"}\\b)"
+
     return dictionary[dictionary.words.str.match(regex)]
 
 
@@ -59,7 +62,7 @@ def rankPossibleGuesses(board, incorrectGuesses, dictionary):
 
 # process arguments
 dictionary2 = pandas.DataFrame(loadDictionary(r"dictionaries/words_alpha.txt"))
-#print(dictionary2)
+
 print("loaded", len(dictionary2), "words")
 
 print("word: zwitterionic")
@@ -69,12 +72,12 @@ print("board:", testBoard)
 print("bad guesses:", badGuesses)
 
 
-heuristic1 = getPossibleWordsFromBoard(testBoard, dictionary2)
-possibilities1 = len(heuristic1)
+alg1 = getPossibleWordsFromBoard(testBoard, dictionary2)
+possibilities1 = len(alg1)
 print(possibilities1, "w/out incorrect guesses:")
 
-heuristic2 = getPossibleWordsFromGame(testBoard, badGuesses, dictionary2)
-possibilities2 = len(heuristic2)
+alg2 = getPossibleWordsFromGame(testBoard, badGuesses, dictionary2)
+possibilities2 = len(alg2)
 print(possibilities2, "w/ incorrect guesses:")
 
 print(possibilities1-possibilities2, "fewer possibilities")
