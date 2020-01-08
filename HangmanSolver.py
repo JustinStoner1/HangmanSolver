@@ -42,18 +42,19 @@ def getPossibleWordsFromGame(board, incorrectGuesses, dictionary):
     # match words to correct guesses and secret word size
     regex = "(?="+board.replace('_', '.')+")(?=\\b\\w{"+str(len(board))+"}\\b)"
 
-    # ensure words do not contain previous incorrect guesses
-    regex += "(?=^[^"
-    for guess in incorrectGuesses:
-        regex += guess
-    regex += "]*$)"
+    if len(incorrectGuesses) > 0:
+        # ensure words do not contain previous incorrect guesses
+        regex += "(?=^[^"
+        for guess in incorrectGuesses:
+            regex += guess
+        regex += "]*$)"
 
     return dictionary[dictionary.words.str.match(regex)]
 
 
-def findLetterFrequency(words):
+def findLetterTotals(words):
     """
-    Calculates the frequency that letters appear in the dataframe of words given
+    Calculates the total number of times that letters appear in the dataframe of words given
     :param words: List of words to analyze
     :return: dictionary containing all observed letters and their occurrence frequency
     """
@@ -69,8 +70,6 @@ def findLetterFrequency(words):
                 freqs[letter] = freqs[letter] + 1
             else:
                 freqs[letter] = 1
-    for k, v in freqs.items():
-        freqs[k] = v/letterCount
     return freqs, letterCount
 
 
@@ -80,31 +79,39 @@ def rankPossibleGuessesByFrequency(board, incorrectGuesses, dictionary):
     :param board: the current state of the hangman game
     :param incorrectGuesses: list of guesses letters that are not in the secret word
     :param dictionary: the dictionary the hangman word is believed to be from
+    :return ranks: chance that each of the remaining un-guessed letters appear in the secret word
     """
 
     usedLetters = incorrectGuesses+[letter for letter in board if letter != "_"]
 
     possibleWords = getPossibleWordsFromGame(board, incorrectGuesses, dictionary)
-    results = findLetterFrequency(possibleWords)
+    results = findLetterTotals(possibleWords)
 
     freqs = results[0]
     letterCount = results[1]
     ranks = {}
     for k, v in freqs.items():
+        occurrences = v  # re-find occurrence count of the letter
         if k not in usedLetters:  # if letter is not already used, add it to possible moves
-            occurrences = v*letterCount  # re-find occurrence count
             ranks[k] = occurrences
+        else:  # letter has already been guessed, remove it from the options
             letterCount -= occurrences  # remove occurrence count of used letters from the total count
-    for k, v in ranks.items():  # if letter is not already used, add it to possible moves
+    for k, v in ranks.items():
         ranks[k] = v / letterCount  # recalculate frequency
-    return ranks
+    return ranks, letterCount
 
 
-def rankPossibleGuessesByElimination():
+def rankPossibleGuessesByElimination(board, incorrectGuesses, dictionary):
     """
     WIP: This function will rank possible letters by the number of possible words they rule out
     """
     print("WIP")
+
+    usedLetters = incorrectGuesses+[letter for letter in board if letter != "_"]
+
+    possibleWords = getPossibleWordsFromGame(board, incorrectGuesses, dictionary)
+    results = findLetterTotals(possibleWords)
+
 
 
 # process arguments
@@ -112,9 +119,9 @@ dictionary2 = pandas.DataFrame(loadDictionary(r"dictionaries/words_alpha.txt"))
 
 print("loaded", len(dictionary2), "words")
 
-print("word: zwitterionic")
-testBoard = "z___________"
-badGuesses = ['b', 'f', 'h', 'p', 'g']
+print("word:  zwitterionic")
+testBoard =  "__itte_i__i_"
+badGuesses = []
 print("board:", testBoard)
 print("bad guesses:", badGuesses)
 
@@ -129,8 +136,12 @@ print(possibilities2, "w/ incorrect guesses:")
 
 print(possibilities1-possibilities2, "fewer possibilities")
 
-letterFreqs = findLetterFrequency(alg1)
-print("letter totals:", letterFreqs)
+letterFreqs = findLetterTotals(alg2)
+print("letter freqs:", letterFreqs)
 
 letterRanks = rankPossibleGuessesByFrequency(testBoard, badGuesses, dictionary2)
 print("letter ranks:", letterRanks)
+
+v = list(letterRanks[0].values())
+k = list(letterRanks[0].keys())
+print(k[v.index(max(v))])
