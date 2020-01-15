@@ -27,15 +27,18 @@ def getPossibleWords(board, usedLetters, dictionary):
     :return: all possible words that could be the secret word bases on the correct and incorrect guesses and size of the secret word
     """
     # match words to correct guesses and secret word size
-    regex = "(?=\\b\\w{"+str(len(board))+"}\\b)(?="
+    regex = "(?=\\b\\w{"+str(len(board))+"}\\b)"
 
-    for space in board:
-        if space == "_":
-            regex += "[^"+usedLetters+"]"
-        else:
-            regex += space
+    if len(usedLetters) > 0:
+        regex += "(?="
+        for space in board:
+            if space == "_":
+                regex += "[^"+usedLetters+"]"
+            else:
+                regex += space
+        regex += ")"
 
-    regex += ")"
+    print(regex)
 
     return dictionary[dictionary.words.str.match(regex)]
 
@@ -192,11 +195,11 @@ def runExample():
 
     print("loaded", len(dictionary2), "words")
 
-    print("word: zwitterionic")
-    testBoard = "u___u__"
-    # print("word:  jazz")
-    # testBoard =  "jazz"
-    guesses = "abcedfghijklmnou"
+    #print("word: zwitterionic")
+    #testBoard = "u___u__"
+    print("word:  jazz")
+    testBoard =  "___"
+    guesses = ""
     print("board:", testBoard)
     print("bad guesses:", guesses)
 
@@ -244,18 +247,16 @@ def runExample():
     heuristic4 = k[v.index(min(v))]
     print("OccurrenceInWordB says:", heuristic4)
 
-    '''
-    possibleLetters = letters = findPossibleLetters(alg, guesses)
+    possibleLetters = findPossibleLetters(alg, guesses)
     print(possibleLetters)
 
     wordCount = len(alg)
     for letter in possibleLetters:
         frequency = letterRanks1[letter]
-        present = letterRanks2[letter]/wordCount
-        abscent = letterRanks3[letter]/wordCount
-        value = frequency/(1-abscent)
+        avgOccInWrd = letterRanks4[letter]
+        value = frequency*avgOccInWrd
 
-        print(letter, "->", present, "/", abscent, "=", value)
-    '''
+        print(letter, "->", frequency, "*", avgOccInWrd, "=", value)
+
 
 runExample()
