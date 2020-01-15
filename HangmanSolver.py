@@ -9,12 +9,12 @@ def loadDictionary(filePath):
     :param filePath: dictionary text file where each line is another word
     :return: a dataframe made from the dictionary file
     """
-
     with open(filePath) as word_file:  #
         lines = word_file.readlines()
         dictList = [line.rstrip('\n') for line in lines]
         dictFrame = pandas.DataFrame(dictList)
         dictFrame.columns = ["words"]
+
     return dictFrame
 
 
@@ -26,13 +26,6 @@ def getPossibleWords(board, usedLetters, dictionary):
     :param dictionary: the dictionary the hangman word is believed to be from
     :return: all possible words that could be the secret word bases on the correct and incorrect guesses and size of the secret word
     """
-
-    """
-    usedLetters = ""
-    for element in incorrectGuesses+[letter for letter in board if letter != "_"]:
-        usedLetters += str(element)
-    """
-
     # match words to correct guesses and secret word size
     regex = "(?=\\b\\w{"+str(len(board))+"}\\b)(?="
 
@@ -54,6 +47,7 @@ def findPossibleLetters(words, usedLetters):
         for letter in word:
             if letter not in letters and letter not in usedLetters:
                 letters.append(letter)
+
     return letters
 
 
@@ -63,7 +57,6 @@ def findLetterTotals(words):
     :param words: List of words to analyze
     :return: dictionary containing all observed letters and their occurrence frequency
     """
-
     totals = {}
     letterCount = 0
     for word in words.values:
@@ -74,6 +67,7 @@ def findLetterTotals(words):
                 totals[letter] = totals[letter] + 1
             else:
                 totals[letter] = 1
+
     return totals, letterCount
 
 
@@ -85,9 +79,6 @@ def rankPossibleGuessesByFrequency(board, usedLetters, dictionary):
     :param dictionary: the dictionary the hangman word is believed to be from
     :return freqs: chance that each of the remaining un-guessed letters appear in the secret word
     """
-
-    #usedLetters = incorrectGuesses+[letter for letter in board if letter != "_"]
-
     possibleWords = getPossibleWords(board, usedLetters, dictionary)
     results = findLetterTotals(possibleWords)
 
@@ -102,6 +93,7 @@ def rankPossibleGuessesByFrequency(board, usedLetters, dictionary):
             letterCount -= occurrences  # remove occurrence count of used letters from the total count
     for k, v in freqs.items():
         freqs[k] = v / letterCount  # recalculate frequency
+
     return freqs
 
 
@@ -113,11 +105,7 @@ def rankPossibleGuessesByOccurrences(board, usedLetters, dictionary):
     :param dictionary: the dictionary the hangman word is believed to be from
     :return: occurrences: number of times each letter was present in a possible word
     """
-
-    #usedLetters = incorrectGuesses+[letter for letter in board if letter != "_"]
-
     possibleWords = getPossibleWords(board, usedLetters, dictionary)
-
     letters = findPossibleLetters(possibleWords, usedLetters)
 
     occurrences = {}
@@ -140,11 +128,7 @@ def rankPossibleGuessesByAbsence(board, usedLetters, dictionary):
     :param dictionary: the dictionary the hangman word is believed to be from
     :return: occurrences: number of times each letter was not present in a possible word
     """
-
-    #usedLetters = usedLetters + [letter for letter in board if letter != "_"]
-
     possibleWords = getPossibleWords(board, usedLetters, dictionary)
-
     letters = findPossibleLetters(possibleWords, usedLetters)
 
     absences = {}
@@ -167,11 +151,7 @@ def rankPossibleGuessesByEliminations(board, usedLetters, dictionary):
     :param dictionary: the dictionary the hangman word is believed to be from
     :return: occurrences: number of times each letter was present in a possible word
     """
-
-    #usedLetters = usedLetters + [letter for letter in board if letter != "_"]
-
     possibleWords = getPossibleWords(board, usedLetters, dictionary)
-
     letters = findPossibleLetters(possibleWords, usedLetters)
 
     eliminations = {}
@@ -186,88 +166,96 @@ def rankPossibleGuessesByEliminations(board, usedLetters, dictionary):
     return eliminations
 
 
-def rankPossibleGuessesByOccurrenceInWord(board, usedLetters, dictionary):
+def rankPossibleGuessesByAvgOccurrenceInWord(board, usedLetters, dictionary):
+    """
+    Ranks the remaining possible letters by the average number of times they appear on a word when they appear
+    :param board: the current state of the hangman game
+    :param usedLetters: list of guesses letters that are not in the secret word
+    :param dictionary: the dictionary the hangman word is believed to be from
+    :return: occurrenceInWord:
+    """
+    possibleWords = getPossibleWords(board, usedLetters, dictionary)
+    possibleLetters = findPossibleLetters(possibleWords, usedLetters)
 
-    possibleLetters = findPossibleLetters(alg, guesses)
-
-    letterCounts = findLetterTotals(alg)[0]
-    occurrences = rankPossibleGuessesByOccurrences(testBoard, guesses, dictionary2)
+    letterCounts = findLetterTotals(possibleWords)[0]
+    occurrences = rankPossibleGuessesByOccurrences(board, usedLetters, dictionary)
 
     occurrenceInWord = {}
     for letter in possibleLetters:
-        count = letterCounts[letter]
-        present = letterRanks2[letter]
-        value = count / present
         occurrenceInWord[letter] = letterCounts[letter]/occurrences[letter]
-
-        #print(letter, "->", count, "/", present, "=", value)
     return occurrenceInWord
 
-# process arguments
-#dictionary2 = pandas.DataFrame(loadDictionary(r"dictionaries/testDict.txt"))
-dictionary2 = pandas.DataFrame(loadDictionary(r"dictionaries/words_alpha.txt"))
 
-print("loaded", len(dictionary2), "words")
+def runExample():
+    # dictionary2 = pandas.DataFrame(loadDictionary(r"dictionaries/testDict.txt"))
+    dictionary2 = pandas.DataFrame(loadDictionary(r"dictionaries/words_alpha.txt"))
 
-print("word:  zwitterionic")
-testBoard =  "zwitterionic"
-#print("word:  jazz")
-#testBoard =  "jazz"
-guesses = "etiwrnczo"
-print("board:", testBoard)
-print("bad guesses:", guesses)
+    print("loaded", len(dictionary2), "words")
 
-alg = getPossibleWords(testBoard, guesses, dictionary2)
-possibilities = len(alg)
-print(possibilities, "w/ incorrect guesses:")
+    print("word: zwitterionic")
+    testBoard = "u___u__"
+    # print("word:  jazz")
+    # testBoard =  "jazz"
+    guesses = "abcedfghijklmnou"
+    print("board:", testBoard)
+    print("bad guesses:", guesses)
 
-letterRanks1 = rankPossibleGuessesByFrequency(testBoard, guesses, dictionary2)
+    alg = getPossibleWords(testBoard, guesses, dictionary2)
+    print(alg)
+    possibilities = len(alg)
+    print(possibilities, "w/ incorrect guesses:")
 
-v = list(letterRanks1.values())
-k = list(letterRanks1.keys())
-heuristic1 = k[v.index(max(v))]
-print("Frequency says:", heuristic1)
+    print(findPossibleLetters(alg, guesses))
 
-heuristic1 = k[v.index(min(v))]
-print("FrequencyB says:", heuristic1)
+    letterRanks1 = rankPossibleGuessesByFrequency(testBoard, guesses, dictionary2)
 
-letterRanks2 = rankPossibleGuessesByOccurrences(testBoard, guesses, dictionary2)
-v = list(letterRanks2.values())
-k = list(letterRanks2.keys())
-heuristic2 = k[v.index(max(v))]
-print("Occurrence says:", heuristic2)
+    v = list(letterRanks1.values())
+    k = list(letterRanks1.keys())
+    heuristic1 = k[v.index(max(v))]
+    print("Frequency says:", heuristic1)
 
-heuristic2 = k[v.index(min(v))]
-print("OccurrenceB says:", heuristic2)
+    heuristic1 = k[v.index(min(v))]
+    print("FrequencyB says:", heuristic1)
 
-letterRanks3 = rankPossibleGuessesByAbsence(testBoard, guesses, dictionary2)
-v = list(letterRanks3.values())
-k = list(letterRanks3.keys())
-heuristic3 = k[v.index(max(v))]
-print("Absence says:", heuristic3)
+    letterRanks2 = rankPossibleGuessesByOccurrences(testBoard, guesses, dictionary2)
+    v = list(letterRanks2.values())
+    k = list(letterRanks2.keys())
+    heuristic2 = k[v.index(max(v))]
+    print("Occurrence says:", heuristic2)
 
-heuristic3 = k[v.index(min(v))]
-print("AbsenceB says:", heuristic3)
+    heuristic2 = k[v.index(min(v))]
+    print("OccurrenceB says:", heuristic2)
 
-letterRanks4 = rankPossibleGuessesByOccurrenceInWord(testBoard, guesses, dictionary2)
-v = list(letterRanks4.values())
-k = list(letterRanks4.keys())
-heuristic4 = k[v.index(max(v))]
-print("OccurrenceInWord says:", heuristic4)
+    letterRanks3 = rankPossibleGuessesByAbsence(testBoard, guesses, dictionary2)
+    v = list(letterRanks3.values())
+    k = list(letterRanks3.keys())
+    heuristic3 = k[v.index(max(v))]
+    print("Absence says:", heuristic3)
 
-heuristic4 = k[v.index(min(v))]
-print("OccurrenceInWordB says:", heuristic4)
+    heuristic3 = k[v.index(min(v))]
+    print("AbsenceB says:", heuristic3)
 
-'''
-possibleLetters = letters = findPossibleLetters(alg, guesses)
-print(possibleLetters)
+    letterRanks4 = rankPossibleGuessesByAvgOccurrenceInWord(testBoard, guesses, dictionary2)
+    v = list(letterRanks4.values())
+    k = list(letterRanks4.keys())
+    heuristic4 = k[v.index(max(v))]
+    print("OccurrenceInWord says:", heuristic4)
 
-wordCount = len(alg)
-for letter in possibleLetters:
-    frequency = letterRanks1[letter]
-    present = letterRanks2[letter]/wordCount
-    abscent = letterRanks3[letter]/wordCount
-    value = frequency/(1-abscent)
+    heuristic4 = k[v.index(min(v))]
+    print("OccurrenceInWordB says:", heuristic4)
 
-    print(letter, "->", present, "/", abscent, "=", value)
-'''
+    '''
+    possibleLetters = letters = findPossibleLetters(alg, guesses)
+    print(possibleLetters)
+
+    wordCount = len(alg)
+    for letter in possibleLetters:
+        frequency = letterRanks1[letter]
+        present = letterRanks2[letter]/wordCount
+        abscent = letterRanks3[letter]/wordCount
+        value = frequency/(1-abscent)
+
+        print(letter, "->", present, "/", abscent, "=", value)
+    '''
+
+runExample()
