@@ -1,5 +1,5 @@
 import pandas
-
+import time
 
 def loadDictionary(filePath):
     """
@@ -25,46 +25,19 @@ def getPossibleWords(board, incorrectGuesses, dictionary):
     :return: all possible words that could be the secret word bases on the correct and incorrect guesses and size of the secret word
     """
 
-    # match words to correct guesses and secret word size
-    regex = "(?="+board.replace('_', '.')+")(?=\\b\\w{"+str(len(board))+"}\\b)"
-
-    if len(incorrectGuesses) > 0:
-        # ensure words do not contain previous incorrect guesses
-        regex += "(?=^[^"
-        for guess in incorrectGuesses:
-            regex += guess
-        regex += "]*$)"
-
-    return dictionary[dictionary.words.str.match(regex)]
-
-
-def getPossibleWordsFaster(board, incorrectGuesses, dictionary):
-    """
-    Uses regular expressions to select all rows of the dictionary dataframe that match the boards size and content
-    :param board: the current state of the hangman game, used to find size and correct guesses
-    :param incorrectGuesses: list of guesses letters that are not in the secret word
-    :param dictionary: the dictionary the hangman word is believed to be from
-    :return: all possible words that could be the secret word bases on the correct and incorrect guesses and size of the secret word
-    """
-
     usedLetters = ""
     for element in incorrectGuesses+[letter for letter in board if letter != "_"]:
         usedLetters += str(element)
-
-    print("usedLetters:", usedLetters)
 
     # match words to correct guesses and secret word size
     regex = "(?="
     for space in board:
         if space == "_":
             regex += "[^"+usedLetters+"]"
-            print(regex)
         else:
             regex += space
 
     regex += ")(?=\\b\\w{"+str(len(board))+"}\\b)"
-
-    print(regex)
 
     return dictionary[dictionary.words.str.match(regex)]
 
@@ -188,19 +161,14 @@ print("loaded", len(dictionary2), "words")
 #print("word:  zwitterionic")
 #testBoard =  "__i____i__i_"
 print("word:  cats")
-testBoard =  "_a__"
-badGuesses = ['e','f']
+testBoard =  "____"
+badGuesses = ['f']
 print("board:", testBoard)
 print("bad guesses:", badGuesses)
 
 alg = getPossibleWords(testBoard, badGuesses, dictionary2)
 possibilities = len(alg)
-print(alg, "w/ incorrect guesses:")
-
-alg2 = getPossibleWordsFaster(testBoard, badGuesses, dictionary2)
-possibilities2 = len(alg2)
-print(alg2, "faster:")
-
+print(possibilities, "w/ incorrect guesses:")
 
 letterRanks1 = rankPossibleGuessesByFrequency(testBoard, badGuesses, dictionary2)
 
