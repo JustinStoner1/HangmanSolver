@@ -22,7 +22,7 @@ def getPossibleWords(board, usedLetters, dictionary):
     """
     Uses regular expressions to select all rows of the dictionary dataframe that match the boards size and content
     :param board: the current state of the hangman game, used to find size and correct guesses
-    :param incorrectGuesses: list of guesses letters that are not in the secret word
+    :param usedLetters: list of letters that have been used already, both correct and incorrect
     :param dictionary: the dictionary the hangman word is believed to be from
     :return: all possible words that could be the secret word bases on the correct and incorrect guesses and size of the secret word
     """
@@ -38,12 +38,16 @@ def getPossibleWords(board, usedLetters, dictionary):
                 regex += space
         regex += ")"
 
-    print(regex)
-
     return dictionary[dictionary.words.str.match(regex)]
 
 
 def findPossibleLetters(words, usedLetters):
+    """
+    Finds all remaining guessable letters based on the possible words minus letters that have already been used
+    :param words: List of words to analyze
+    :param usedLetters: list of letters that have been used already, both correct and incorrect
+    :return: letters: list of remaining possible guesses
+    """
     letters = []
     for word in words.values:
         word = word[0]
@@ -58,7 +62,7 @@ def findLetterTotals(words):
     """
     Calculates the total number of times that letters appear in the dataframe of words given
     :param words: List of words to analyze
-    :return: dictionary containing all observed letters and their occurrence frequency
+    :return: totals, letterCount: dictionary containing all observed letters and their occurrence frequency, total number of letters counted
     """
     totals = {}
     letterCount = 0
@@ -78,7 +82,7 @@ def rankPossibleGuessesByFrequency(board, usedLetters, dictionary):
     """
     Ranks the remaining possible letters (from the english alphabet) based on the frequency that they occur in the possible words
     :param board: the current state of the hangman game
-    :param usedLetters: list of guesses letters that are not in the secret word
+    :param usedLetters: list of letters that have been used already, both correct and incorrect
     :param dictionary: the dictionary the hangman word is believed to be from
     :return freqs: chance that each of the remaining un-guessed letters appear in the secret word
     """
@@ -104,7 +108,7 @@ def rankPossibleGuessesByOccurrences(board, usedLetters, dictionary):
     """
     Ranks the remaining possible letters by number of words they appear in
     :param board: the current state of the hangman game
-    :param usedLetters: list of guesses letters that are not in the secret word
+    :param usedLetters: list of letters that have been used already, both correct and incorrect
     :param dictionary: the dictionary the hangman word is believed to be from
     :return: occurrences: number of times each letter was present in a possible word
     """
@@ -127,7 +131,7 @@ def rankPossibleGuessesByAbsence(board, usedLetters, dictionary):
     """
     Ranks the remaining possible letters by number of words they do not appear in
     :param board: the current state of the hangman game
-    :param usedLetters: list of guesses letters that are not in the secret word
+    :param usedLetters: list of letters that have been used already, both correct and incorrect
     :param dictionary: the dictionary the hangman word is believed to be from
     :return: occurrences: number of times each letter was not present in a possible word
     """
@@ -150,7 +154,7 @@ def rankPossibleGuessesByEliminations(board, usedLetters, dictionary):
     """
     Ranks the remaining possible letters by number of words they appear in
     :param board: the current state of the hangman game
-    :param usedLetters: list of guesses letters that are not in the secret word
+    :param usedLetters: list of letters that have been used already, both correct and incorrect
     :param dictionary: the dictionary the hangman word is believed to be from
     :return: occurrences: number of times each letter was present in a possible word
     """
@@ -173,7 +177,7 @@ def rankPossibleGuessesByAvgOccurrenceInWord(board, usedLetters, dictionary):
     """
     Ranks the remaining possible letters by the average number of times they appear on a word when they appear
     :param board: the current state of the hangman game
-    :param usedLetters: list of guesses letters that are not in the secret word
+    :param usedLetters: list of letters that have been used already, both correct and incorrect
     :param dictionary: the dictionary the hangman word is believed to be from
     :return: occurrenceInWord:
     """
@@ -197,9 +201,9 @@ def runExample():
 
     #print("word: zwitterionic")
     #testBoard = "u___u__"
-    print("word:  jazz")
-    testBoard =  "___"
-    guesses = ""
+    print("word:  bikini")
+    testBoard =  "bikini"
+    guesses = "eaoibmktn"
     print("board:", testBoard)
     print("bad guesses:", guesses)
 
@@ -208,7 +212,7 @@ def runExample():
     possibilities = len(alg)
     print(possibilities, "w/ incorrect guesses:")
 
-    print(findPossibleLetters(alg, guesses))
+    #print(findPossibleLetters(alg, guesses))
 
     letterRanks1 = rankPossibleGuessesByFrequency(testBoard, guesses, dictionary2)
 
@@ -248,7 +252,7 @@ def runExample():
     print("OccurrenceInWordB says:", heuristic4)
 
     possibleLetters = findPossibleLetters(alg, guesses)
-    print(possibleLetters)
+    #print(possibleLetters)
 
     wordCount = len(alg)
     for letter in possibleLetters:
@@ -256,7 +260,7 @@ def runExample():
         avgOccInWrd = letterRanks4[letter]
         value = frequency*avgOccInWrd
 
-        print(letter, "->", frequency, "*", avgOccInWrd, "=", value)
+        #print(letter, "->", frequency, "*", avgOccInWrd, "=", value)
 
 
 runExample()
