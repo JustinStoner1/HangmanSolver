@@ -1,7 +1,5 @@
-import math
-
 import pandas
-import time
+
 
 def loadDictionary(filePath):
     """
@@ -15,7 +13,7 @@ def loadDictionary(filePath):
         dictFrame = pandas.DataFrame(dictList)
         dictFrame.columns = ["words"]
 
-    return dictFrame
+    return pandas.DataFrame(dictFrame)
 
 
 def getPossibleWords(board, usedLetters, dictionary):
@@ -193,17 +191,48 @@ def rankPossibleGuessesByAvgOccurrenceInWord(board, usedLetters, dictionary):
     return occurrenceInWord
 
 
+def getGuess(heuristic, board, guesses, dictionary):
+    print("Using", heuristic, "to guess")
+    if heuristic == "frequency":
+        letterRanks = rankPossibleGuessesByFrequency(board, guesses, dictionary)
+    elif heuristic == "occurrence":
+        letterRanks = rankPossibleGuessesByOccurrences(board, guesses, dictionary)
+    elif heuristic == "absence":
+        letterRanks = rankPossibleGuessesByAbsence(board, guesses, dictionary)
+    elif heuristic == "avgOccurrenceInWord":
+        letterRanks = rankPossibleGuessesByAvgOccurrenceInWord(board, guesses, dictionary)
+    else:
+        print("Heuristics are:")
+        print("frequency")
+        print("occurrence")
+        print("absence")
+        print("avgOccurrenceInWord")
+        letterRanks = rankPossibleGuessesByFrequency(board, guesses, dictionary)
+    v = list(letterRanks.values())
+    k = list(letterRanks.keys())
+
+    possibleWords = getPossibleWords(board, guesses, dictionary)
+    if possibleWords.size == 1:  # can guess word
+        word = possibleWords.words.iloc[0]
+        print("Guessing", word)
+    else:
+        word = ""
+
+    return k[v.index(max(v))], word
+
+
+
 def runExample():
     # dictionary2 = pandas.DataFrame(loadDictionary(r"dictionaries/testDict.txt"))
     dictionary2 = pandas.DataFrame(loadDictionary(r"dictionaries/words_alpha.txt"))
 
-    print("loaded", len(dictionary2), "words")
+    print("loaded", len(dictionary2), "words\n")
 
     #print("word: zwitterionic")
     #testBoard = "u___u__"
-    print("word:  bikini")
-    testBoard =  "bikini"
-    guesses = "eaoibmktn"
+    print("word:  calculation")
+    testBoard =  "ca_c__a_ion"
+    guesses = "eioancr"
     print("board:", testBoard)
     print("bad guesses:", guesses)
 
@@ -261,6 +290,3 @@ def runExample():
         value = frequency*avgOccInWrd
 
         #print(letter, "->", frequency, "*", avgOccInWrd, "=", value)
-
-
-runExample()
