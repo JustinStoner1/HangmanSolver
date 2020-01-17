@@ -76,15 +76,15 @@ def findLetterTotals(words):
     return totals, letterCount
 
 
-def rankPossibleGuessesByFrequency(board, usedLetters, dictionary):
+def rankPossibleGuessesByFrequency(board, usedLetters, possibleWords):
     """
     Ranks the remaining possible letters (from the english alphabet) based on the frequency that they occur in the possible words
     :param board: the current state of the hangman game
     :param usedLetters: list of letters that have been used already, both correct and incorrect
-    :param dictionary: the dictionary the hangman word is believed to be from
+    :param possibleWords: list of words the hangman word is believed to be from/in
     :return freqs: chance that each of the remaining un-guessed letters appear in the secret word
     """
-    possibleWords = getPossibleWords(board, usedLetters, dictionary)
+    #possibleWords = getPossibleWords(board, usedLetters, dictionary)
     results = findLetterTotals(possibleWords)
 
     totals = results[0]
@@ -102,15 +102,15 @@ def rankPossibleGuessesByFrequency(board, usedLetters, dictionary):
     return freqs
 
 
-def rankPossibleGuessesByOccurrences(board, usedLetters, dictionary):
+def rankPossibleGuessesByOccurrences(board, usedLetters, possibleWords):
     """
     Ranks the remaining possible letters by number of words they appear in
     :param board: the current state of the hangman game
     :param usedLetters: list of letters that have been used already, both correct and incorrect
-    :param dictionary: the dictionary the hangman word is believed to be from
+    :param possibleWords: list of words the hangman word is believed to be from/in
     :return: occurrences: number of times each letter was present in a possible word
     """
-    possibleWords = getPossibleWords(board, usedLetters, dictionary)
+    #possibleWords = getPossibleWords(board, usedLetters, dictionary)
     letters = findPossibleLetters(possibleWords, usedLetters)
 
     occurrences = {}
@@ -125,15 +125,15 @@ def rankPossibleGuessesByOccurrences(board, usedLetters, dictionary):
     return occurrences
 
 
-def rankPossibleGuessesByAbsence(board, usedLetters, dictionary):
+def rankPossibleGuessesByAbsence(board, usedLetters, possibleWords):
     """
     Ranks the remaining possible letters by number of words they do not appear in
     :param board: the current state of the hangman game
     :param usedLetters: list of letters that have been used already, both correct and incorrect
-    :param dictionary: the dictionary the hangman word is believed to be from
+    :param possibleWords: list of words the hangman word is believed to be from/in
     :return: occurrences: number of times each letter was not present in a possible word
     """
-    possibleWords = getPossibleWords(board, usedLetters, dictionary)
+    #possibleWords = getPossibleWords(board, usedLetters, dictionary)
     letters = findPossibleLetters(possibleWords, usedLetters)
 
     absences = {}
@@ -148,15 +148,15 @@ def rankPossibleGuessesByAbsence(board, usedLetters, dictionary):
     return absences
 
 
-def rankPossibleGuessesByEliminations(board, usedLetters, dictionary):
+def rankPossibleGuessesByEliminations(board, usedLetters, possibleWords):
     """
     Ranks the remaining possible letters by number of words they appear in
     :param board: the current state of the hangman game
     :param usedLetters: list of letters that have been used already, both correct and incorrect
-    :param dictionary: the dictionary the hangman word is believed to be from
+    :param possibleWords: list of words the hangman word is believed to be from/in
     :return: occurrences: number of times each letter was present in a possible word
     """
-    possibleWords = getPossibleWords(board, usedLetters, dictionary)
+    #possibleWords = getPossibleWords(board, usedLetters, dictionary)
     letters = findPossibleLetters(possibleWords, usedLetters)
 
     eliminations = {}
@@ -171,19 +171,19 @@ def rankPossibleGuessesByEliminations(board, usedLetters, dictionary):
     return eliminations
 
 
-def rankPossibleGuessesByAvgOccurrenceInWord(board, usedLetters, dictionary):
+def rankPossibleGuessesByAvgOccurrenceInWord(board, usedLetters, possibleWords):
     """
     Ranks the remaining possible letters by the average number of times they appear on a word when they appear
     :param board: the current state of the hangman game
     :param usedLetters: list of letters that have been used already, both correct and incorrect
-    :param dictionary: the dictionary the hangman word is believed to be from
+    :param possibleWords: list of words the hangman word is believed to be from/in
     :return: occurrenceInWord:
     """
-    possibleWords = getPossibleWords(board, usedLetters, dictionary)
+    #possibleWords = getPossibleWords(board, usedLetters, dictionary)
     possibleLetters = findPossibleLetters(possibleWords, usedLetters)
 
     letterCounts = findLetterTotals(possibleWords)[0]
-    occurrences = rankPossibleGuessesByOccurrences(board, usedLetters, dictionary)
+    occurrences = rankPossibleGuessesByOccurrences(board, usedLetters, possibleWords)
 
     occurrenceInWord = {}
     for letter in possibleLetters:

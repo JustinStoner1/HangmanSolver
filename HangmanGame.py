@@ -34,6 +34,7 @@ class HangmanGame:
             print("correct")
             self.board = word
             self.complete = True
+            print("board:", self.board)
             print("you win")
         else:
             print("incorrect")
