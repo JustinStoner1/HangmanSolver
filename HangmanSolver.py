@@ -24,6 +24,7 @@ def getPossibleWords(board, usedLetters, dictionary):
     :param dictionary: the dictionary the hangman word is believed to be from
     :return: all possible words that could be the secret word bases on the correct and incorrect guesses and size of the secret word
     """
+
     # match words to correct guesses and secret word size
     regex = "(?=\\b\\w{"+str(len(board))+"}\\b)"
 
@@ -149,24 +150,10 @@ def rankPossibleGuessesByAbsence(board, usedLetters, possibleWords):
 
 
 def rankPossibleGuessesByEliminations(board, usedLetters, possibleWords):
-    """
-    Ranks the remaining possible letters by number of words they appear in
-    :param board: the current state of the hangman game
-    :param usedLetters: list of letters that have been used already, both correct and incorrect
-    :param possibleWords: list of words the hangman word is believed to be from/in
-    :return: occurrences: number of times each letter was present in a possible word
-    """
-    #possibleWords = getPossibleWords(board, usedLetters, dictionary)
+
     letters = findPossibleLetters(possibleWords, usedLetters)
 
     eliminations = {}
-    for letter in letters:
-        count = 0
-        for word in possibleWords.values:
-            word = word[0]
-            if letter in word:
-                count += 1
-        eliminations[letter] = count
 
     return eliminations
 
@@ -214,7 +201,6 @@ def getGuess(heuristic, board, guesses, dictionary):
     possibleWords = getPossibleWords(board, guesses, dictionary)
     if possibleWords.size == 1:  # can guess word
         word = possibleWords.words.iloc[0]
-        print("Guessing", word)
     else:
         word = ""
 
@@ -223,16 +209,17 @@ def getGuess(heuristic, board, guesses, dictionary):
 
 
 def runExample():
-    # dictionary2 = pandas.DataFrame(loadDictionary(r"dictionaries/testDict.txt"))
-    dictionary2 = pandas.DataFrame(loadDictionary(r"dictionaries/words_alpha.txt"))
+    dictionary2 = pandas.DataFrame(loadDictionary(r"dictionaries/testDict.txt"))
+    #dictionary2 = pandas.DataFrame(loadDictionary(r"dictionaries/words_alpha.txt"))
 
     print("loaded", len(dictionary2), "words\n")
 
     #print("word: zwitterionic")
     #testBoard = "u___u__"
-    print("word:  calculation")
-    testBoard =  "ca_c__a_ion"
-    guesses = "eioancr"
+    print("word:  sate")
+    testBoard =  "____"
+    #used:     fwfwfwfwf
+    guesses = ""
     print("board:", testBoard)
     print("bad guesses:", guesses)
 
@@ -243,7 +230,7 @@ def runExample():
 
     #print(findPossibleLetters(alg, guesses))
 
-    letterRanks1 = rankPossibleGuessesByFrequency(testBoard, guesses, dictionary2)
+    letterRanks1 = rankPossibleGuessesByFrequency(testBoard, guesses, alg)
 
     v = list(letterRanks1.values())
     k = list(letterRanks1.keys())
@@ -253,7 +240,7 @@ def runExample():
     heuristic1 = k[v.index(min(v))]
     print("FrequencyB says:", heuristic1)
 
-    letterRanks2 = rankPossibleGuessesByOccurrences(testBoard, guesses, dictionary2)
+    letterRanks2 = rankPossibleGuessesByOccurrences(testBoard, guesses, alg)
     v = list(letterRanks2.values())
     k = list(letterRanks2.keys())
     heuristic2 = k[v.index(max(v))]
@@ -262,7 +249,7 @@ def runExample():
     heuristic2 = k[v.index(min(v))]
     print("OccurrenceB says:", heuristic2)
 
-    letterRanks3 = rankPossibleGuessesByAbsence(testBoard, guesses, dictionary2)
+    letterRanks3 = rankPossibleGuessesByAbsence(testBoard, guesses, alg)
     v = list(letterRanks3.values())
     k = list(letterRanks3.keys())
     heuristic3 = k[v.index(max(v))]
@@ -271,7 +258,7 @@ def runExample():
     heuristic3 = k[v.index(min(v))]
     print("AbsenceB says:", heuristic3)
 
-    letterRanks4 = rankPossibleGuessesByAvgOccurrenceInWord(testBoard, guesses, dictionary2)
+    letterRanks4 = rankPossibleGuessesByAvgOccurrenceInWord(testBoard, guesses, alg)
     v = list(letterRanks4.values())
     k = list(letterRanks4.keys())
     heuristic4 = k[v.index(max(v))]
@@ -286,7 +273,7 @@ def runExample():
     wordCount = len(alg)
     for letter in possibleLetters:
         frequency = letterRanks1[letter]
-        avgOccInWrd = letterRanks4[letter]
+        avgOccInWrd = letterRanks2[letter]
         value = frequency*avgOccInWrd
 
-        #print(letter, "->", frequency, "*", avgOccInWrd, "=", value)
+        print(letter, "->", frequency, "*", avgOccInWrd, "=", value)
