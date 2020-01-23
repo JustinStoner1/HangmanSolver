@@ -2,7 +2,7 @@
 
 ## Description
 
-The goal of this project is to create a set of heuristics or strategies that an computer player could use to play games of Hangman. I will also be evaluating and testing heuristics with the Collins Scrabble Words (2019) dictionary to determine which strategies give the best of changing minimizing the number of guesses required to correctly guess the secret word.
+The goal of this project is to create a set of heuristics or strategies that a computer player could use to play games of Hangman. I will also be evaluating and testing heuristics with the Collins Scrabble Words (2019) dictionary to determine which strategies give the best of changing minimizing the number of guesses required to correctly guess the secret word.
 
 ### Letter Frequency
 
