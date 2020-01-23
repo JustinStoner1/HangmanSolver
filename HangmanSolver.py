@@ -9,7 +9,7 @@ def loadDictionary(filePath):
     """
     with open(filePath) as word_file:  #
         lines = word_file.readlines()
-        dictList = [line.rstrip('\n') for line in lines]
+        dictList = [line.rstrip('\n').lower() for line in lines]
         dictFrame = pandas.DataFrame(dictList)
         dictFrame.columns = ["words"]
 
@@ -149,22 +149,13 @@ def rankPossibleGuessesByAbsence(board, usedLetters, possibleWords):
     return absences
 
 
-def rankPossibleGuessesByEliminations(board, usedLetters, possibleWords):
-
-    letters = findPossibleLetters(possibleWords, usedLetters)
-
-    eliminations = {}
-
-    return eliminations
-
-
 def rankPossibleGuessesByAvgOccurrenceInWord(board, usedLetters, possibleWords):
     """
     Ranks the remaining possible letters by the average number of times they appear on a word when they appear
     :param board: the current state of the hangman game
     :param usedLetters: list of letters that have been used already, both correct and incorrect
     :param possibleWords: list of words the hangman word is believed to be from/in
-    :return: occurrenceInWord:
+    :return: avgOccurrenceInWord: avgerage number of times a letter appears in a word when it appears
     """
     #possibleWords = getPossibleWords(board, usedLetters, dictionary)
     possibleLetters = findPossibleLetters(possibleWords, usedLetters)
@@ -172,14 +163,44 @@ def rankPossibleGuessesByAvgOccurrenceInWord(board, usedLetters, possibleWords):
     letterCounts = findLetterTotals(possibleWords)[0]
     occurrences = rankPossibleGuessesByOccurrences(board, usedLetters, possibleWords)
 
-    occurrenceInWord = {}
+    avgOccurrenceInWord = {}
     for letter in possibleLetters:
-        occurrenceInWord[letter] = letterCounts[letter]/occurrences[letter]
-    return occurrenceInWord
+        avgOccurrenceInWord[letter] = letterCounts[letter]/occurrences[letter]
+    return avgOccurrenceInWord
+
+def rankPossibleGuessesByPositionsInWord(board, usedLetters, possibleWords):
+    """
+    Ranks the remaining possible letters by the number of different positions they appear in
+    :param board: the current state of the hangman game
+    :param usedLetters: list of letters that have been used already, both correct and incorrect
+    :param possibleWords: list of words the hangman word is believed to be from/in
+    :return: occurrenceInWord: number of different positions a word appears in
+    """
+
+    positions = len(board)
+    oneHotEncodings = {}
+    for word in possibleWords.values:
+        position = 0
+        word = word[0]
+        for letter in word:
+            if letter in oneHotEncodings:
+                oneHotEncodings[letter][position] = oneHotEncodings[letter][position] + 1
+            else:
+                oneHotEncodings[letter] = [0 for i in range(0, positions)]
+                oneHotEncodings[letter][position] = oneHotEncodings[letter][position] + 1
+            position += 1
+    print(oneHotEncodings)
+    ranks = {}
+    for k, v in oneHotEncodings.items():
+        count = 0
+        ranks[k] = len([c for c in v if c > 0])
+
+    return ranks
+
 
 
 def getGuess(heuristic, board, guesses, dictionary):
-    print("Using", heuristic, "to guess")
+    # print("Using", heuristic, "to guess")
     if heuristic == "frequency":
         letterRanks = rankPossibleGuessesByFrequency(board, guesses, dictionary)
     elif heuristic == "occurrence":
@@ -188,12 +209,15 @@ def getGuess(heuristic, board, guesses, dictionary):
         letterRanks = rankPossibleGuessesByAbsence(board, guesses, dictionary)
     elif heuristic == "avgOccurrenceInWord":
         letterRanks = rankPossibleGuessesByAvgOccurrenceInWord(board, guesses, dictionary)
+    elif heuristic == "positionsInWord":
+        letterRanks = rankPossibleGuessesByAvgOccurrenceInWord(board, guesses, dictionary)
     else:
         print("Heuristics are:")
         print("frequency")
         print("occurrence")
         print("absence")
         print("avgOccurrenceInWord")
+        print("positionsInWord")
         letterRanks = rankPossibleGuessesByFrequency(board, guesses, dictionary)
     v = list(letterRanks.values())
     k = list(letterRanks.keys())
@@ -211,6 +235,7 @@ def getGuess(heuristic, board, guesses, dictionary):
 def runExample():
     dictionary2 = pandas.DataFrame(loadDictionary(r"dictionaries/testDict.txt"))
     #dictionary2 = pandas.DataFrame(loadDictionary(r"dictionaries/words_alpha.txt"))
+    #dictionary2 = pandas.DataFrame(loadDictionary(r"dictionaries/Collins Scrabble Words (2019).txt"))
 
     print("loaded", len(dictionary2), "words\n")
 
@@ -267,13 +292,12 @@ def runExample():
     heuristic4 = k[v.index(min(v))]
     print("OccurrenceInWordB says:", heuristic4)
 
-    possibleLetters = findPossibleLetters(alg, guesses)
-    #print(possibleLetters)
+    letterRanks5 = rankPossibleGuessesByPositionsInWord(testBoard, guesses, alg)
+    v = list(letterRanks5.values())
+    k = list(letterRanks5.keys())
+    heuristic5 = k[v.index(max(v))]
+    print("PositionsInWord says:", heuristic5)
 
-    wordCount = len(alg)
-    for letter in possibleLetters:
-        frequency = letterRanks1[letter]
-        avgOccInWrd = letterRanks2[letter]
-        value = frequency*avgOccInWrd
+    heuristic5 = k[v.index(min(v))]
+    print("PositionsInWord says:", heuristic5)
 
-        print(letter, "->", frequency, "*", avgOccInWrd, "=", value)
