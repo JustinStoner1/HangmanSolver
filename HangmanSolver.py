@@ -7,6 +7,7 @@ def loadDictionary(filePath):
     :param filePath: dictionary text file where each line is another word
     :return: a dataframe made from the dictionary file
     """
+
     with open(filePath) as word_file:  #
         lines = word_file.readlines()
         dictList = [line.rstrip('\n').lower() for line in lines]
@@ -47,6 +48,7 @@ def findPossibleLetters(words, usedLetters):
     :param usedLetters: list of letters that have been used already, both correct and incorrect
     :return: letters: list of remaining possible guesses
     """
+
     letters = []
     for word in words.values:
         word = word[0]
@@ -200,19 +202,26 @@ def rankPossibleGuessesByPositionsInWord(board, usedLetters, possibleWords):
     return ranks
 
 
-
-def getGuess(heuristic, board, guesses, dictionary):
+def getGuess(heuristic, board, usedLetters, dictionary):
+    """
+    Retrieves a guess based on the heuristic, current board, used letters, and dictionary
+    :param heuristic: the name of the heuristic to use
+    :param board: the current state of the hangman game
+    :param usedLetters: list of letters that have been used already, both correct and incorrect
+    :param dictionary: dictionary dataframe assumed to contain the secret word
+    :return: letter, word: the best letter to guess based on the given heuristic, the last remaining word if only one is left, otherwise an empty string
+    """
     # print("Using", heuristic, "to guess")
     if heuristic == "frequency":
-        letterRanks = rankPossibleGuessesByFrequency(board, guesses, dictionary)
+        letterRanks = rankPossibleGuessesByFrequency(board, usedLetters, dictionary)
     elif heuristic == "occurrence":
-        letterRanks = rankPossibleGuessesByOccurrences(board, guesses, dictionary)
+        letterRanks = rankPossibleGuessesByOccurrences(board, usedLetters, dictionary)
     elif heuristic == "absence":
-        letterRanks = rankPossibleGuessesByAbsence(board, guesses, dictionary)
+        letterRanks = rankPossibleGuessesByAbsence(board, usedLetters, dictionary)
     elif heuristic == "avgOccurrenceInWord":
-        letterRanks = rankPossibleGuessesByAvgOccurrenceInWord(board, guesses, dictionary)
+        letterRanks = rankPossibleGuessesByAvgOccurrenceInWord(board, usedLetters, dictionary)
     elif heuristic == "positionsInWord":
-        letterRanks = rankPossibleGuessesByAvgOccurrenceInWord(board, guesses, dictionary)
+        letterRanks = rankPossibleGuessesByPositionsInWord(board, usedLetters, dictionary)
     else:
         print("Heuristics are:")
         print("frequency")
@@ -220,11 +229,11 @@ def getGuess(heuristic, board, guesses, dictionary):
         print("absence")
         print("avgOccurrenceInWord")
         print("positionsInWord")
-        letterRanks = rankPossibleGuessesByFrequency(board, guesses, dictionary)
+        letterRanks = rankPossibleGuessesByFrequency(board, usedLetters, dictionary)
     v = list(letterRanks.values())
     k = list(letterRanks.keys())
 
-    possibleWords = getPossibleWords(board, guesses, dictionary)
+    possibleWords = getPossibleWords(board, usedLetters, dictionary)
     if possibleWords.size == 1:  # can guess word
         word = possibleWords.words.iloc[0]
     else:
@@ -233,17 +242,16 @@ def getGuess(heuristic, board, guesses, dictionary):
     return k[v.index(max(v))], word
 
 
-
 def runExample():
-    #dictionary2 = pandas.DataFrame(loadDictionary(r"dictionaries/testDict.txt"))
+    dictionary2 = pandas.DataFrame(loadDictionary(r"dictionaries/testDict.txt"))
     #dictionary2 = pandas.DataFrame(loadDictionary(r"dictionaries/words_alpha.txt"))
-    dictionary2 = pandas.DataFrame(loadDictionary(r"dictionaries/Collins Scrabble Words (2019).txt"))
+    #dictionary2 = pandas.DataFrame(loadDictionary(r"dictionaries/Collins Scrabble Words (2019).txt"))
 
     print("loaded", len(dictionary2), "words\n")
 
     #print("word: zwitterionic")
     #testBoard = "u___u__"
-    print("word:  jazz")
+    print("word:  sate")
     testBoard =  "____"
     #used:     pp
     guesses = ""

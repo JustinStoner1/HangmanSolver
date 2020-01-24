@@ -16,11 +16,18 @@ def testGame(word, words, heuristic):
         board = game.board
         usedLetters = game.usedLetters
         words = HangmanSolver.getPossibleWords(board, usedLetters, words)
-        print("used letters:", usedLetters)
 
         guess = HangmanSolver.getGuess(heuristic, board, usedLetters, words)
 
-        print("guessing:", guess)
+        # Alternating heuristic usage
+        '''
+        if heuristicFlag:
+            guess = HangmanSolver.getGuess("frequency", board, usedLetters, words)
+        else:
+            guess = HangmanSolver.getGuess("avgOccurrenceInWord", board, usedLetters, words)
+        heuristicFlag = not heuristicFlag
+        '''
+
         if guess[1] != "":
             result = game.guessWord(guess[1])[3]
         else:
@@ -44,8 +51,8 @@ def runTests(words, heuristic, outFileName):
         for word in words.values:
             gameNumber += 1
             word = word[0]
-            print(word)
             gameResult = testGame(word, words, heuristic)
+            print(gameResult)
             outFile.write("\n" + str(gameNumber) + "," + gameResult[0] + "," + str(gameResult[1]) + "," + str(gameResult[2]) + "," + str(gameResult[3]) + "," + str(gameResult[4]) + "," + str(gameResult[5]))
 
 
@@ -56,8 +63,8 @@ def runTestsFrom(gameNumber, words, heuristic, outFileName):
         for word in wordVals:
             gameNumber += 1
             word = word[0]
-            print(word)
             gameResult = testGame(word, words, heuristic)
+            print(gameResult)
             outFile.write("\n" + str(gameNumber) + "," + gameResult[0] + "," + str(gameResult[1]) + "," + str(gameResult[2]) + "," + str(gameResult[3]) + "," + str(gameResult[4]) + "," + str(gameResult[5]))
 
 
@@ -65,5 +72,5 @@ dict = HangmanSolver.loadDictionary(r"dictionaries/Collins Scrabble Words (2019)
 
 # runTests(dict, "frequency", r"outFiles/frequency_Collins Scrabble Words (2019).csv")
 # runTestsFrom(254730, dict, "frequency", r"outFiles/frequency_Collins Scrabble Words (2019).csv")
-print(testGame("jazz", dict, "positionsInWord"))
-# HangmanSolver.runExample()
+# print(testGame("jazz", dict, "positionsInWord"))
+HangmanSolver.runExample()
