@@ -168,6 +168,7 @@ def rankPossibleGuessesByAvgOccurrenceInWord(board, usedLetters, possibleWords):
         avgOccurrenceInWord[letter] = letterCounts[letter]/occurrences[letter]
     return avgOccurrenceInWord
 
+
 def rankPossibleGuessesByPositionsInWord(board, usedLetters, possibleWords):
     """
     Ranks the remaining possible letters by the number of different positions they appear in
@@ -183,17 +184,18 @@ def rankPossibleGuessesByPositionsInWord(board, usedLetters, possibleWords):
         position = 0
         word = word[0]
         for letter in word:
+            if letter in usedLetters:
+                continue
             if letter in oneHotEncodings:
                 oneHotEncodings[letter][position] = oneHotEncodings[letter][position] + 1
             else:
                 oneHotEncodings[letter] = [0 for i in range(0, positions)]
                 oneHotEncodings[letter][position] = oneHotEncodings[letter][position] + 1
             position += 1
-    print(oneHotEncodings)
     ranks = {}
     for k, v in oneHotEncodings.items():
-        count = 0
-        ranks[k] = len([c for c in v if c > 0])
+        # ranks[k] = len([c for c in v if c > 0])/len(possibleWords.values)
+        ranks[k] = sum([c/len(possibleWords.values) for c in v if c > 0])*len([c for c in v if c > 0])/len(possibleWords.values)
 
     return ranks
 
@@ -233,17 +235,17 @@ def getGuess(heuristic, board, guesses, dictionary):
 
 
 def runExample():
-    dictionary2 = pandas.DataFrame(loadDictionary(r"dictionaries/testDict.txt"))
+    #dictionary2 = pandas.DataFrame(loadDictionary(r"dictionaries/testDict.txt"))
     #dictionary2 = pandas.DataFrame(loadDictionary(r"dictionaries/words_alpha.txt"))
-    #dictionary2 = pandas.DataFrame(loadDictionary(r"dictionaries/Collins Scrabble Words (2019).txt"))
+    dictionary2 = pandas.DataFrame(loadDictionary(r"dictionaries/Collins Scrabble Words (2019).txt"))
 
     print("loaded", len(dictionary2), "words\n")
 
     #print("word: zwitterionic")
     #testBoard = "u___u__"
-    print("word:  sate")
+    print("word:  jazz")
     testBoard =  "____"
-    #used:     fwfwfwfwf
+    #used:     pp
     guesses = ""
     print("board:", testBoard)
     print("bad guesses:", guesses)
@@ -293,6 +295,7 @@ def runExample():
     print("OccurrenceInWordB says:", heuristic4)
 
     letterRanks5 = rankPossibleGuessesByPositionsInWord(testBoard, guesses, alg)
+    print(letterRanks5)
     v = list(letterRanks5.values())
     k = list(letterRanks5.keys())
     heuristic5 = k[v.index(max(v))]

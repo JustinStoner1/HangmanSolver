@@ -16,11 +16,11 @@ def testGame(word, words, heuristic):
         board = game.board
         usedLetters = game.usedLetters
         words = HangmanSolver.getPossibleWords(board, usedLetters, words)
-        # print("used letters:", usedLetters)
+        print("used letters:", usedLetters)
 
         guess = HangmanSolver.getGuess(heuristic, board, usedLetters, words)
 
-        # print("guessing:", guess)
+        print("guessing:", guess)
         if guess[1] != "":
             result = game.guessWord(guess[1])[3]
         else:
@@ -65,5 +65,5 @@ dict = HangmanSolver.loadDictionary(r"dictionaries/Collins Scrabble Words (2019)
 
 # runTests(dict, "frequency", r"outFiles/frequency_Collins Scrabble Words (2019).csv")
 # runTestsFrom(254730, dict, "frequency", r"outFiles/frequency_Collins Scrabble Words (2019).csv")
-# testGame("jazz", dict, "frequency")
-HangmanSolver.runExample()
+print(testGame("jazz", dict, "positionsInWord"))
+# HangmanSolver.runExample()
