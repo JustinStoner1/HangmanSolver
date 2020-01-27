@@ -1,7 +1,7 @@
 import pandas
 
 
-def loadDictionary(filePath):
+def loadDictionary(filePath: str) -> pandas.core.frame.DataFrame:
     """
     Loads a dictionary txt file where each line is assumed to be a word
     :param filePath: dictionary text file where each line is another word
@@ -17,7 +17,7 @@ def loadDictionary(filePath):
     return pandas.DataFrame(dictFrame)
 
 
-def getPossibleWords(board, usedLetters, dictionary):
+def getPossibleWords(board: str, usedLetters: str, dictionary: list) -> pandas.core.frame.DataFrame:
     """
     Uses regular expressions to select all rows of the dictionary dataframe that match the boards size and content
     :param board: the current state of the hangman game, used to find size and correct guesses
@@ -41,7 +41,7 @@ def getPossibleWords(board, usedLetters, dictionary):
     return dictionary[dictionary.words.str.match(regex)]
 
 
-def findPossibleLetters(words, usedLetters):
+def findPossibleLetters(words: pandas.core.frame.DataFrame, usedLetters: str) -> list:
     """
     Finds all remaining guessable letters based on the possible words minus letters that have already been used
     :param words: List of words to analyze
@@ -59,7 +59,7 @@ def findPossibleLetters(words, usedLetters):
     return letters
 
 
-def findLetterTotals(words):
+def findLetterTotals(words: pandas.core.frame.DataFrame) -> (list, int):
     """
     Calculates the total number of times that letters appear in the dataframe of words given
     :param words: List of words to analyze
@@ -79,7 +79,7 @@ def findLetterTotals(words):
     return totals, letterCount
 
 
-def rankPossibleGuessesByFrequency(board, usedLetters, possibleWords):
+def rankPossibleGuessesByFrequency(board: str, usedLetters: str, possibleWords: list) -> pandas.core.frame.DataFrame:
     """
     Ranks the remaining possible letters (from the english alphabet) based on the frequency that they occur in the possible words
     :param board: the current state of the hangman game
@@ -105,7 +105,7 @@ def rankPossibleGuessesByFrequency(board, usedLetters, possibleWords):
     return freqs
 
 
-def rankPossibleGuessesByOccurrences(board, usedLetters, possibleWords):
+def rankPossibleGuessesByOccurrences(board: str, usedLetters: str, possibleWords: list) -> pandas.core.frame.DataFrame:
     """
     Ranks the remaining possible letters by number of words they appear in
     :param board: the current state of the hangman game
@@ -128,7 +128,7 @@ def rankPossibleGuessesByOccurrences(board, usedLetters, possibleWords):
     return occurrences
 
 
-def rankPossibleGuessesByAbsence(board, usedLetters, possibleWords):
+def rankPossibleGuessesByAbsence(board: str, usedLetters: str, possibleWords: list) -> pandas.core.frame.DataFrame:
     """
     Ranks the remaining possible letters by number of words they do not appear in
     :param board: the current state of the hangman game
@@ -151,7 +151,7 @@ def rankPossibleGuessesByAbsence(board, usedLetters, possibleWords):
     return absences
 
 
-def rankPossibleGuessesByAvgOccurrenceInWord(board, usedLetters, possibleWords):
+def rankPossibleGuessesByAvgOccurrenceInWord(board: str, usedLetters: str, possibleWords: list) -> pandas.core.frame.DataFrame:
     """
     Ranks the remaining possible letters by the average number of times they appear on a word when they appear
     :param board: the current state of the hangman game
@@ -171,7 +171,7 @@ def rankPossibleGuessesByAvgOccurrenceInWord(board, usedLetters, possibleWords):
     return avgOccurrenceInWord
 
 
-def rankPossibleGuessesByPositionsInWord(board, usedLetters, possibleWords):
+def rankPossibleGuessesByPositionsInWord(board: str, usedLetters: str, possibleWords: list) -> pandas.core.frame.DataFrame:
     """
     Ranks the remaining possible letters by the number of different positions they appear in
     :param board: the current state of the hangman game
@@ -202,7 +202,7 @@ def rankPossibleGuessesByPositionsInWord(board, usedLetters, possibleWords):
     return ranks
 
 
-def getGuess(heuristic, board, usedLetters, dictionary):
+def getGuess(heuristic: str, board: str, usedLetters: str, dictionary: pandas.core.frame.DataFrame) -> str:
     """
     Retrieves a guess based on the heuristic, current board, used letters, and dictionary
     :param heuristic: the name of the heuristic to use
@@ -243,18 +243,18 @@ def getGuess(heuristic, board, usedLetters, dictionary):
 
 
 def runExample():
-    dictionary2 = pandas.DataFrame(loadDictionary(r"dictionaries/testDict.txt"))
+    #dictionary2 = pandas.DataFrame(loadDictionary(r"dictionaries/testDict.txt"))
     #dictionary2 = pandas.DataFrame(loadDictionary(r"dictionaries/words_alpha.txt"))
-    #dictionary2 = pandas.DataFrame(loadDictionary(r"dictionaries/Collins Scrabble Words (2019).txt"))
+    dictionary2 = pandas.DataFrame(loadDictionary(r"dictionaries/Collins Scrabble Words (2019).txt"))
 
     print("loaded", len(dictionary2), "words\n")
 
     #print("word: zwitterionic")
     #testBoard = "u___u__"
-    print("word:  sate")
-    testBoard =  "____"
+    print("word:  he")
+    testBoard =  "h_"
     #used:     pp
-    guesses = ""
+    guesses = "h"
     print("board:", testBoard)
     print("bad guesses:", guesses)
 
