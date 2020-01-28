@@ -68,9 +68,38 @@ def runTestsFrom(gameNumber, words, heuristic, outFileName):
             outFile.write("\n" + str(gameNumber) + "," + gameResult[0] + "," + str(gameResult[1]) + "," + str(gameResult[2]) + "," + str(gameResult[3]) + "," + str(gameResult[4]) + "," + str(gameResult[5]))
 
 
+def runDict(words, heuristic, outFileName):
+    # wordVals = words.values[gameNumber:]
+    # print(wordVals)
+    try:
+        print("loading existing out file")
+        with open(outFileName, "r") as outFile:
+            # get the last line of the file, split it by , and grab the first element of the list
+            gameNumber = int(outFile.readlines()[-1].split(',')[0])
+    except(FileNotFoundError, ValueError):
+        print("creating out file")
+        with open(outFileName, "w") as outFile:
+            outFile.write("gameNumber,word,wordLength,guessCount,correctGuessCount,incorrectGuessCount,usedLetters")
+        gameNumber = 0
+    # game numbers start at one, so game x uses word x - 1
+    print("last word:", gameNumber, words.values[gameNumber-1])
+    print("starting at:", gameNumber+1, words.values[gameNumber])
+
+    with open(outFileName, "a") as outFile:
+        wordVals = words.values[gameNumber:]
+
+        for word in wordVals:
+            gameNumber += 1
+            word = word[0]
+            gameResult = testGame(word, words, heuristic)
+            print(gameResult)
+            outFile.write("\n" + str(gameNumber) + "," + gameResult[0] + "," + str(gameResult[1]) + "," + str(gameResult[2]) + "," + str(gameResult[3]) + "," + str(gameResult[4]) + "," + str(gameResult[5]))
+
+
 dictFrame = HangmanSolver.loadDictionary(r"dictionaries/Collins Scrabble Words (2019).txt")
 
-runTests(dictFrame, "frequency", r"outFiles/frequency_Collins Scrabble Words (2019).csv")
-# runTestsFrom(254730, dictFrame, "frequency", r"outFiles/frequency_Collins Scrabble Words (2019).csv")
+# runTests(dictFrame, "frequency", r"outFiles/frequency_Collins Scrabble Words (2019).csv")
+# runTestsFrom(66907, dictFrame, "frequency", r"outFiles/frequency_Collins Scrabble Words (2019).csv")
+runDict(dictFrame, "frequency", r"outFiles/frequency_Collins Scrabble Words (2019).csv")
 # print(testGame("jazz", dictFrame, "positionsInWord"))
-HangmanSolver.runExample()
+# HangmanSolver.runExample()
