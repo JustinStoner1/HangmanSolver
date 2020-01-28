@@ -68,9 +68,9 @@ def runTestsFrom(gameNumber, words, heuristic, outFileName):
             outFile.write("\n" + str(gameNumber) + "," + gameResult[0] + "," + str(gameResult[1]) + "," + str(gameResult[2]) + "," + str(gameResult[3]) + "," + str(gameResult[4]) + "," + str(gameResult[5]))
 
 
-dict = HangmanSolver.loadDictionary(r"dictionaries/Collins Scrabble Words (2019).txt")
+dictFrame = HangmanSolver.loadDictionary(r"dictionaries/Collins Scrabble Words (2019).txt")
 
-# runTests(dict, "frequency", r"outFiles/frequency_Collins Scrabble Words (2019).csv")
-# runTestsFrom(254730, dict, "frequency", r"outFiles/frequency_Collins Scrabble Words (2019).csv")
-# print(testGame("jazz", dict, "positionsInWord"))
+runTests(dictFrame, "frequency", r"outFiles/frequency_Collins Scrabble Words (2019).csv")
+# runTestsFrom(254730, dictFrame, "frequency", r"outFiles/frequency_Collins Scrabble Words (2019).csv")
+# print(testGame("jazz", dictFrame, "positionsInWord"))
 HangmanSolver.runExample()
