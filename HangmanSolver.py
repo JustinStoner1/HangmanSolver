@@ -115,7 +115,7 @@ def rankPossibleGuessesByOccurrences(board: str, usedLetters: str, possibleWords
     """
     #possibleWords = getPossibleWords(board, usedLetters, dictionary)
     letters = findPossibleLetters(possibleWords, usedLetters)
-
+    '''
     occurrences = {}
     for letter in letters:
         count = 0
@@ -124,6 +124,18 @@ def rankPossibleGuessesByOccurrences(board: str, usedLetters: str, possibleWords
             if letter in word:
                 count += 1
         occurrences[letter] = count
+
+    '''
+    occurrences = {}
+    for word in possibleWords.values:
+        word = word[0]
+        for letter in letters:
+            if letter in word:
+                if letter in occurrences:
+                    occurrences[letter] = occurrences[letter] + 1
+                else:
+                    occurrences[letter] = 1
+                continue
 
     return occurrences
 
@@ -251,10 +263,10 @@ def runExample():
 
     #print("word: zwitterionic")
     #testBoard = "u___u__"
-    print("word:  he")
-    testBoard =  "h_"
+    print("word:  zwitterionic")
+    testBoard =  "__i____i__i_"
     #used:     pp
-    guesses = "h"
+    guesses = "i"
     print("board:", testBoard)
     print("bad guesses:", guesses)
 
