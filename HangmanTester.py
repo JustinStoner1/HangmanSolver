@@ -1,7 +1,6 @@
-import pandas
 from HangmanGame import HangmanGame
+import OutFileEvaluator
 import HangmanSolver
-import csv
 
 
 def testGame(word, words, heuristic):
@@ -69,8 +68,6 @@ def runTestsFrom(gameNumber, words, heuristic, outFileName):
 
 
 def runDict(words, heuristic, outFileName):
-    # wordVals = words.values[gameNumber:]
-    # print(wordVals)
     try:
         print("loading existing out file")
         with open(outFileName, "r") as outFile:
@@ -93,13 +90,12 @@ def runDict(words, heuristic, outFileName):
             word = word[0]
             gameResult = testGame(word, words, heuristic)
             print(gameResult)
-            outFile.write("\n" + str(gameNumber) + "," + gameResult[0] + "," + str(gameResult[1]) + "," + str(gameResult[2]) + "," + str(gameResult[3]) + "," + str(gameResult[4]) + "," + str(gameResult[5]))
+            outFile.write("\n" + str(gameNumber) + ',' + gameResult[0] + ',' + str(gameResult[1]) + ',' + str(gameResult[2]) + ',' + str(gameResult[3]) + ',' + str(gameResult[4]) + ',' + str(gameResult[5]))
 
 
 dictFrame = HangmanSolver.loadDictionary(r"dictionaries/Collins Scrabble Words (2019).txt")
 
-# runTests(dictFrame, "frequency", r"outFiles/frequency_Collins Scrabble Words (2019).csv")
-# runTestsFrom(66907, dictFrame, "frequency", r"outFiles/frequency_Collins Scrabble Words (2019).csv")
-runDict(dictFrame, "frequency", r"outFiles/frequency_Collins Scrabble Words (2019).csv")
+# runDict(dictFrame, "occurrence", r"outFiles/occurrence_Collins Scrabble Words (2019).csv")
 # print(testGame("jazz", dictFrame, "positionsInWord"))
 # HangmanSolver.runExample()
+# OutFileEvaluator.aggregateOutFileData(r"outFiles/occurrence_Collins Scrabble Words (2019).csv", r"aggFiles/aggData_occurrence_Collins Scrabble Words (2019).csv")
