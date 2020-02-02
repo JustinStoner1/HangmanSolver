@@ -135,7 +135,6 @@ def rankPossibleGuessesByOccurrences(board: str, usedLetters: str, possibleWords
                     occurrences[letter] = occurrences[letter] + 1
                 else:
                     occurrences[letter] = 1
-                continue
 
     return occurrences
 
