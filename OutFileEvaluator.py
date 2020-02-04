@@ -12,7 +12,7 @@ def aggregateOutFileData(outFileName: str, aggDataFileName: str):
         totalAvgWrongGuesses = 0
         dataDict = {}
         for entry in outFileReader:
-            #print(entry)
+            print(entry)
             entryCount += 1
             wordLength = int(entry["wordLength"])
             guesses = int(entry["guessCount"])
