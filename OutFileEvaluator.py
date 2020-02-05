@@ -1,4 +1,5 @@
 import csv
+import math
 
 
 def aggregateOutFileData(outFileName: str, aggDataFileName: str):
@@ -49,9 +50,9 @@ def aggregateOutFileData(outFileName: str, aggDataFileName: str):
         avgCorrectGuesses = v[2]/v[6]
         avgWrongGuesses = v[4]/v[6]
 
-        stddevGuesses = v[1]/v[6]-avgGuesses*avgGuesses
-        stddevCorrectGuesses = v[3]/v[6]-avgCorrectGuesses*avgCorrectGuesses
-        stddevWrongGuesses = v[5]/v[6]-avgWrongGuesses*avgWrongGuesses
+        stddevGuesses = math.sqrt(v[1]/v[6]-avgGuesses*avgGuesses)
+        stddevCorrectGuesses = math.sqrt(v[3]/v[6]-avgCorrectGuesses*avgCorrectGuesses)
+        stddevWrongGuesses = math.sqrt(v[5]/v[6]-avgWrongGuesses*avgWrongGuesses)
 
         aggDataFileLines += "\n" + str(k) + ',' + str(avgGuesses) + ',' + str(avgCorrectGuesses) + ',' + str(avgWrongGuesses) + ',' + str(stddevGuesses) + ',' + str(stddevCorrectGuesses) + ',' + str(stddevWrongGuesses)
 
