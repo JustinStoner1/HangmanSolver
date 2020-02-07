@@ -97,5 +97,5 @@ dictFrame = HangmanSolver.loadDictionary(r"dictionaries/Collins Scrabble Words (
 
 # print(testGame("jazz", dictFrame, "positionsInWord"))
 # HangmanSolver.runExample()
-runDict(dictFrame, "occurrence", r"outFiles/occurrence_Collins Scrabble Words (2019).csv")
-OutFileEvaluator.aggregateOutFileData(r"outFiles/occurrence_Collins Scrabble Words (2019).csv", r"aggFiles/aggData_occurrence_Collins Scrabble Words (2019).csv")
+# runDict(dictFrame, "occurrence", r"outFiles/occurrence_Collins Scrabble Words (2019).csv")
+OutFileEvaluator.aggregateOutFileData(r"outFiles/frequency_Collins Scrabble Words (2019).csv", r"aggFiles/aggData_frequency_Collins Scrabble Words (2019).csv")
