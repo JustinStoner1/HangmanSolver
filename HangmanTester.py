@@ -17,6 +17,7 @@ def testGame(word, words, heuristic):
         words = HangmanSolver.getPossibleWords(board, usedLetters, words)
 
         guess = HangmanSolver.getGuess(heuristic, board, usedLetters, words)
+        # print(guess)
 
         # Alternating heuristic usage
         '''
@@ -40,31 +41,6 @@ def testGame(word, words, heuristic):
         guessCount += 1
 
     return word, len(word), guessCount, correctGuessCount, incorrectGuessCount, game.usedLetters
-
-
-def runTests(words, heuristic, outFileName):
-    with open(outFileName, "w") as outFile:
-        outFile.write("gameNumber,word,wordLength,guessCount,correctGuessCount,incorrectGuessCount,usedLetters")
-    with open(outFileName, "a") as outFile:
-        gameNumber = 0
-        for word in words.values:
-            gameNumber += 1
-            word = word[0]
-            gameResult = testGame(word, words, heuristic)
-            print(gameResult)
-            outFile.write("\n" + str(gameNumber) + "," + gameResult[0] + "," + str(gameResult[1]) + "," + str(gameResult[2]) + "," + str(gameResult[3]) + "," + str(gameResult[4]) + "," + str(gameResult[5]))
-
-
-def runTestsFrom(gameNumber, words, heuristic, outFileName):
-    with open(outFileName, "a") as outFile:
-        wordVals = words.values[gameNumber:]
-
-        for word in wordVals:
-            gameNumber += 1
-            word = word[0]
-            gameResult = testGame(word, words, heuristic)
-            print(gameResult)
-            outFile.write("\n" + str(gameNumber) + "," + gameResult[0] + "," + str(gameResult[1]) + "," + str(gameResult[2]) + "," + str(gameResult[3]) + "," + str(gameResult[4]) + "," + str(gameResult[5]))
 
 
 def runDict(words, heuristic, outFileName):
