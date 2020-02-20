@@ -61,7 +61,7 @@ def makeDictFromDict(words):
     print(sum)
 
 
-def runDict(words, heuristic, outFileName):
+def runTestsOnDict(words, heuristic, outFileName):
     try:
         print("loading existing out file")
         with open(outFileName, "r") as outFile:
@@ -86,6 +86,9 @@ def runDict(words, heuristic, outFileName):
             print(gameResult)
             outFile.write("\n" + str(gameNumber) + ',' + gameResult[0] + ',' + str(gameResult[1]) + ',' + str(gameResult[2]) + ',' + str(gameResult[3]) + ',' + str(gameResult[4]) + ',' + str(gameResult[5]))
 
+
+def runTestsOnSectionOfDict(words, heuristic, outFileName):
+    print("WIP")
 
 dictFrame = HangmanSolver.loadDictionary(r"dictionaries/Collins Scrabble Words (2019).txt")
 
