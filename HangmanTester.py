@@ -87,13 +87,47 @@ def runTestsOnDict(words, heuristic, outFileName):
             outFile.write("\n" + str(gameNumber) + ',' + gameResult[0] + ',' + str(gameResult[1]) + ',' + str(gameResult[2]) + ',' + str(gameResult[3]) + ',' + str(gameResult[4]) + ',' + str(gameResult[5]))
 
 
-def runTestsOnSectionOfDict(words, heuristic, outFileName):
-    print("WIP")
+def runTestsOnSectionOfDict(words, heuristic, outFileName, start, finish):
+    try:
+        print("loading existing out file")
+        with open(outFileName, "r") as outFile:
+            # get the last line of the file, split it by , and grab the first element of the list
+            gameNumber = int(outFile.readlines()[-1].split(',')[0])
+            print("last word testing was:", gameNumber, words.values[gameNumber-1])
+    except(FileNotFoundError, ValueError):
+        print("creating out file")
+        with open(outFileName, "w") as outFile:
+            outFile.write("gameNumber,word,wordLength,guessCount,correctGuessCount,incorrectGuessCount,usedLetters")
+        #gameNumber = 0
+    gameNumber = start
+    # game numbers start at one, so game x uses word x - 1
+    print("last word:", start, words.values[start-1])
+    print("starting at:", start+1, words.values[start])
+    print("stopping at:", finish, words.values[finish-1])
+
+    with open(outFileName, "a") as outFile:
+        wordVals = words.values[gameNumber:]
+
+        for word in wordVals:
+            gameNumber += 1
+            if gameNumber >= finish:
+                break
+            word = word[0]
+            gameResult = testGame(word, words, heuristic)
+            print(gameResult)
+            #appendGameToOutFile(gameNumber, gameResult)
+            outFile.write("\n" + str(gameNumber) + ',' + gameResult[0] + ',' + str(gameResult[1]) + ',' + str(gameResult[2]) + ',' + str(gameResult[3]) + ',' + str(gameResult[4]) + ',' + str(gameResult[5]))
+
+'''
+def appendGameToOutFile(gameNumber: int, gameResult: (str, list, str), outFile):
+    outFile.write("\n" + str(gameNumber) + ',' + gameResult[0] + ',' + str(gameResult[1]) + ',' + str(gameResult[2]) + ',' + str(gameResult[3]) + ',' + str(gameResult[4]) + ',' + str(gameResult[5]))
+'''
 
 dictFrame = HangmanSolver.loadDictionary(r"dictionaries/Collins Scrabble Words (2019).txt")
 
 # print(testGame("zwitterionic", dictFrame, "positionsInWord"))
-HangmanSolver.runExample()
+# HangmanSolver.runExample()
 # makeDictFromDict(dictFrame)
-# runDict(dictFrame, "positionsInWord", r"outFiles/positionsInWord_Collins Scrabble Words (2019).csv")
+# runTestsOnDict(dictFrame, "positionsInWord", r"outFiles/positionsInWord_Collins Scrabble Words (2019).csv")
+runTestsOnSectionOfDict(dictFrame, "positionsInWord", r"outFiles/positionsInWord_Collins Scrabble Words (2019).csv", 71613, 71620)
 # OutFileEvaluator.aggregateOutFileData(r"outFiles/positionsInWord_Collins Scrabble Words (2019).csv", r"aggFiles/aggData_positionsInWord_Collins Scrabble Words (2019).csv")
