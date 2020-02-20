@@ -133,8 +133,10 @@ def rankPossibleGuessesByOccurrences(board: str, usedLetters: str, possibleWords
     occurrences = {}
     for word in possibleWords.values:
         word = word[0]
+        seenLetters = ""  # list of characters already seen in the word so far
         for letter in word:
-            if letter in letters:
+            if letter in letters and letter not in seenLetters:
+                seenLetters += letter
                 if letter in occurrences:
                     occurrences[letter] = occurrences[letter] + 1
                 else:
@@ -181,6 +183,7 @@ def rankPossibleGuessesByAvgOccurrenceInWord(board: str, usedLetters: str, possi
     avgOccurrenceInWord = {}
     for letter in possibleLetters:
         avgOccurrenceInWord[letter] = letterCounts[letter]/occurrences[letter]
+
     return avgOccurrenceInWord
 
 
@@ -267,7 +270,7 @@ def runExample():
     #used:     pp
     guesses = "i"
     print("board:", testBoard)
-    print("bad guesses:", guesses)
+    print("guesses:", guesses)
 
     alg = getPossibleWords(testBoard, guesses, dictionary2)
     print(alg)
@@ -285,6 +288,7 @@ def runExample():
 
     heuristic1 = k[v.index(min(v))]
     print("FrequencyB says:", heuristic1)
+    print(letterRanks1)
 
     letterRanks2 = rankPossibleGuessesByOccurrences(testBoard, guesses, alg)
     v = list(letterRanks2.values())
@@ -294,6 +298,7 @@ def runExample():
 
     heuristic2 = k[v.index(min(v))]
     print("OccurrenceB says:", heuristic2)
+    print(letterRanks2)
 
     letterRanks3 = rankPossibleGuessesByAbsence(testBoard, guesses, alg)
     v = list(letterRanks3.values())
@@ -303,18 +308,19 @@ def runExample():
 
     heuristic3 = k[v.index(min(v))]
     print("AbsenceB says:", heuristic3)
+    print(letterRanks3)
 
     letterRanks4 = rankPossibleGuessesByAvgOccurrenceInWord(testBoard, guesses, alg)
     v = list(letterRanks4.values())
     k = list(letterRanks4.keys())
     heuristic4 = k[v.index(max(v))]
-    print("OccurrenceInWord says:", heuristic4)
+    print("AvgOccurrenceInWord says:", heuristic4)
 
     heuristic4 = k[v.index(min(v))]
-    print("OccurrenceInWordB says:", heuristic4)
+    print("AvgOccurrenceInWordB says:", heuristic4)
+    print(letterRanks4)
 
     letterRanks5 = rankPossibleGuessesByPositionsInWord(testBoard, guesses, alg)
-    print(letterRanks5)
     v = list(letterRanks5.values())
     k = list(letterRanks5.keys())
     heuristic5 = k[v.index(max(v))]
@@ -322,4 +328,5 @@ def runExample():
 
     heuristic5 = k[v.index(min(v))]
     print("PositionsInWord says:", heuristic5)
+    print(letterRanks5)
 
