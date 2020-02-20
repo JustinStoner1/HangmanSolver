@@ -94,11 +94,10 @@ def rankPossibleGuessesByFrequency(board: str, usedLetters: str, possibleWords: 
     letterCount = results[1]
     freqs = {}
     for k, v in totals.items():
-        occurrences = v  # re-find occurrence count of the letter
         if k not in usedLetters:  # if letter is not already used, add it to possible moves
-            freqs[k] = occurrences
+            freqs[k] = v
         else:  # letter has already been guessed, remove it from the options
-            letterCount -= occurrences  # remove occurrence count of used letters from the total count
+            letterCount -= v  # remove occurrence count of used letters from the total count
     for k, v in freqs.items():
         freqs[k] = v / letterCount  # recalculate frequency
 

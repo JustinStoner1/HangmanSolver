@@ -44,11 +44,21 @@ def testGame(word, words, heuristic):
 
 
 def makeDictFromDict(words):
-    freqs = HangmanSolver.rankPossibleGuessesByFrequency()
+    results = HangmanSolver.findLetterTotals(words)
+
+    totals = results[0]
+    letterCount = results[1]
+    freqs = {}
+    for k, v in totals.items():
+        occurrences = v  # re-find occurrence count of the letter
+        freqs[k] = occurrences
+    for k, v in freqs.items():
+        freqs[k] = v / letterCount  # recalculate frequency
+    print(freqs)
     sum = 0
     for v in freqs.values():
         sum += v
-    print(makeDictFromDict())
+    print(sum)
 
 
 def runDict(words, heuristic, outFileName):
@@ -81,5 +91,6 @@ dictFrame = HangmanSolver.loadDictionary(r"dictionaries/Collins Scrabble Words (
 
 # print(testGame("jazz", dictFrame, "positionsInWord"))
 # HangmanSolver.runExample()
-runDict(dictFrame, "avgOccurrenceInWord", r"outFiles/avgOccurrenceInWord_Collins Scrabble Words (2019).csv")
-OutFileEvaluator.aggregateOutFileData(r"outFiles/avgOccurrenceInWord_Collins Scrabble Words (2019).csv", r"aggFiles/aggData_avgOccurrenceInWord_Collins Scrabble Words (2019).csv")
+makeDictFromDict(dictFrame)
+#runDict(dictFrame, "avgOccurrenceInWord", r"outFiles/avgOccurrenceInWord_Collins Scrabble Words (2019).csv")
+#OutFileEvaluator.aggregateOutFileData(r"outFiles/avgOccurrenceInWord_Collins Scrabble Words (2019).csv", r"aggFiles/aggData_avgOccurrenceInWord_Collins Scrabble Words (2019).csv")
