@@ -7,7 +7,6 @@ def loadDictionary(filePath: str) -> pandas.core.frame.DataFrame:
     :param filePath: dictionary text file where each line is another word
     :return: a dataframe made from the dictionary file
     """
-
     with open(filePath) as word_file:  #
         lines = word_file.readlines()
         dictList = [line.rstrip('\n').lower() for line in lines]
@@ -25,8 +24,6 @@ def getPossibleWords(board: str, usedLetters: str, dictionary: list) -> pandas.c
     :param dictionary: the dictionary the hangman word is believed to be from
     :return: all possible words that could be the secret word bases on the correct and incorrect guesses and size of the secret word
     """
-
-    # match words to correct guesses and secret word size
     regex = "(?=\\b\\w{"+str(len(board))+"}\\b)"
 
     if len(usedLetters) > 0:
@@ -48,7 +45,6 @@ def findPossibleLetters(words: pandas.core.frame.DataFrame, usedLetters: str) ->
     :param usedLetters: list of letters that have been used already, both correct and incorrect
     :return: letters: list of remaining possible guesses
     """
-
     letters = []
     for word in words.values:
         word = word[0]
@@ -87,7 +83,6 @@ def rankPossibleGuessesByFrequency(board: str, usedLetters: str, possibleWords: 
     :param possibleWords: list of words the hangman word is believed to be from/in
     :return freqs: chance that each of the remaining un-guessed letters appear in the secret word
     """
-    #possibleWords = getPossibleWords(board, usedLetters, dictionary)
     results = findLetterTotals(possibleWords)
 
     totals = results[0]
@@ -112,7 +107,6 @@ def rankPossibleGuessesByOccurrences(board: str, usedLetters: str, possibleWords
     :param possibleWords: list of words the hangman word is believed to be from/in
     :return: occurrences: number of times each letter was present in a possible word
     """
-    #possibleWords = getPossibleWords(board, usedLetters, dictionary)
     letters = findPossibleLetters(possibleWords, usedLetters)
     '''
     occurrences = {}
@@ -125,11 +119,22 @@ def rankPossibleGuessesByOccurrences(board: str, usedLetters: str, possibleWords
         occurrences[letter] = count
 
     '''
+    '''
     occurrences = {}
     for word in possibleWords.values:
         word = word[0]
         for letter in letters:
             if letter in word:
+                if letter in occurrences:
+                    occurrences[letter] = occurrences[letter] + 1
+                else:
+                    occurrences[letter] = 1
+    '''
+    occurrences = {}
+    for word in possibleWords.values:
+        word = word[0]
+        for letter in word:
+            if letter in letters:
                 if letter in occurrences:
                     occurrences[letter] = occurrences[letter] + 1
                 else:
@@ -146,7 +151,6 @@ def rankPossibleGuessesByAbsence(board: str, usedLetters: str, possibleWords: li
     :param possibleWords: list of words the hangman word is believed to be from/in
     :return: occurrences: number of times each letter was not present in a possible word
     """
-    #possibleWords = getPossibleWords(board, usedLetters, dictionary)
     letters = findPossibleLetters(possibleWords, usedLetters)
 
     absences = {}
@@ -169,7 +173,6 @@ def rankPossibleGuessesByAvgOccurrenceInWord(board: str, usedLetters: str, possi
     :param possibleWords: list of words the hangman word is believed to be from/in
     :return: avgOccurrenceInWord: avgerage number of times a letter appears in a word when it appears
     """
-    #possibleWords = getPossibleWords(board, usedLetters, dictionary)
     possibleLetters = findPossibleLetters(possibleWords, usedLetters)
 
     letterCounts = findLetterTotals(possibleWords)[0]
@@ -189,7 +192,6 @@ def rankPossibleGuessesByPositionsInWord(board: str, usedLetters: str, possibleW
     :param possibleWords: list of words the hangman word is believed to be from/in
     :return: occurrenceInWord: number of different positions a word appears in
     """
-
     positions = len(board)
     oneHotEncodings = {}
     for word in possibleWords.values:
@@ -221,7 +223,6 @@ def getGuess(heuristic: str, board: str, usedLetters: str, dictionary: pandas.co
     :param dictionary: dictionary dataframe assumed to contain the secret word
     :return: letter, word: the best letter to guess based on the given heuristic, the last remaining word if only one is left, otherwise an empty string
     """
-    # print("Using", heuristic, "to guess")
     if heuristic == "frequency":
         letterRanks = rankPossibleGuessesByFrequency(board, usedLetters, dictionary)
     elif heuristic == "occurrence":

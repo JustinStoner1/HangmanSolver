@@ -89,8 +89,8 @@ def runDict(words, heuristic, outFileName):
 
 dictFrame = HangmanSolver.loadDictionary(r"dictionaries/Collins Scrabble Words (2019).txt")
 
-# print(testGame("jazz", dictFrame, "positionsInWord"))
-# HangmanSolver.runExample()
-makeDictFromDict(dictFrame)
-#runDict(dictFrame, "avgOccurrenceInWord", r"outFiles/avgOccurrenceInWord_Collins Scrabble Words (2019).csv")
-#OutFileEvaluator.aggregateOutFileData(r"outFiles/avgOccurrenceInWord_Collins Scrabble Words (2019).csv", r"aggFiles/aggData_avgOccurrenceInWord_Collins Scrabble Words (2019).csv")
+# print(testGame("zwitterionic", dictFrame, "positionsInWord"))
+HangmanSolver.runExample()
+# makeDictFromDict(dictFrame)
+# runDict(dictFrame, "positionsInWord", r"outFiles/positionsInWord_Collins Scrabble Words (2019).csv")
+# OutFileEvaluator.aggregateOutFileData(r"outFiles/positionsInWord_Collins Scrabble Words (2019).csv", r"aggFiles/aggData_positionsInWord_Collins Scrabble Words (2019).csv")
