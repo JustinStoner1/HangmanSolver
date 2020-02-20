@@ -43,6 +43,14 @@ def testGame(word, words, heuristic):
     return word, len(word), guessCount, correctGuessCount, incorrectGuessCount, game.usedLetters
 
 
+def makeDictFromDict(words):
+    freqs = HangmanSolver.rankPossibleGuessesByFrequency()
+    sum = 0
+    for v in freqs.values():
+        sum += v
+    print(makeDictFromDict())
+
+
 def runDict(words, heuristic, outFileName):
     try:
         print("loading existing out file")
