@@ -93,7 +93,7 @@ def runTestsOnSectionOfDict(words, heuristic, outFileName, start, finish):
         with open(outFileName, "r") as outFile:
             # get the last line of the file, split it by , and grab the first element of the list
             gameNumber = int(outFile.readlines()[-1].split(',')[0])
-            print("last word testing was:", gameNumber, words.values[gameNumber-1])
+            print("last word tested was:", gameNumber, words.values[gameNumber-1])
     except(FileNotFoundError, ValueError):
         print("creating out file")
         with open(outFileName, "w") as outFile:
