@@ -1,9 +1,18 @@
+import pandas
+
 from HangmanGame import HangmanGame
 import OutFileEvaluator
 import HangmanSolver
 
 
-def testGame(word, words, heuristic):
+def testGame(word: str, words: pandas.core.frame.DataFrame, heuristic: str) -> (str, int, int, int, int, str):
+    """
+    Runs a game of hangman with the provided settings and returns the details
+    :param word: the secret word
+    :param words: the dictionary the secret is (believed) to be from
+    :param heuristic: the strategy the function will use to make guesses
+    :return: (the secret word, the length of the secret word, the total number of guesses used, the total number of correct guesses, the total number of incorrect guesses, the letters guesses in the order they were guessed)
+    """
     game = HangmanGame(word, 8)
 
     heuristicFlag = False
@@ -61,7 +70,13 @@ def makeDictFromDict(words):
     print(sum)
 
 
-def runTestsOnDict(words, heuristic, outFileName):
+def runTestsOnDict(words: pandas.core.frame.DataFrame, heuristic: str, outFileName: str):
+    """
+    Runs the "testGame" function on every word in the dictionary. If the file already exists, it will pick up where it left off
+    :param words: the dictionary the secret is (believed) to be from
+    :param heuristic: the strategy the function will use to make guesses
+    :param outFileName: name of the file that the program should append results to
+    """
     try:
         print("loading existing out file")
         with open(outFileName, "r") as outFile:
@@ -87,7 +102,15 @@ def runTestsOnDict(words, heuristic, outFileName):
             outFile.write("\n" + str(gameNumber) + ',' + gameResult[0] + ',' + str(gameResult[1]) + ',' + str(gameResult[2]) + ',' + str(gameResult[3]) + ',' + str(gameResult[4]) + ',' + str(gameResult[5]))
 
 
-def runTestsOnSectionOfDict(words, heuristic, outFileName, start, finish):
+def runTestsOnSectionOfDict(words: pandas.core.frame.DataFrame, heuristic: str, outFileName: str, start: int, finish: int):
+    """
+    Runs the "testGame" function on every word in the range provided. The words are indexed in the order they appear in the dictionary. If the file already exists, it will pick up where it left off.
+    :param words: the dictionary the secret is (believed) to be from
+    :param heuristic: the strategy the function will use to make guesses
+    :param outFileName: name of the file that the program should append results to
+    :param start: the index of the beginning of the range; includes this word
+    :param finish: the index of the end of the range; this word will not be included
+    """
     try:
         print("loading existing out file")
         with open(outFileName, "r") as outFile:
