@@ -16,7 +16,7 @@ def loadDictionary(filePath: str) -> pandas.core.frame.DataFrame:
     return pandas.DataFrame(dictFrame)
 
 
-def getPossibleWords(board: str, usedLetters: str, dictionary: list) -> pandas.core.frame.DataFrame:
+def getPossibleWords(board: str, usedLetters: str, dictionary: pandas.core.frame.DataFrame) -> pandas.core.frame.DataFrame:
     """
     Uses regular expressions to select all rows of the dictionary dataframe that match the boards size and content
     :param board: the current state of the hangman game, used to find size and correct guesses
@@ -75,7 +75,7 @@ def findLetterTotals(words: pandas.core.frame.DataFrame) -> (list, int):
     return totals, letterCount
 
 
-def rankPossibleGuessesByFrequency(board: str, usedLetters: str, possibleWords: list) -> pandas.core.frame.DataFrame:
+def rankPossibleGuessesByFrequency(board: str, usedLetters: str, possibleWords: pandas.core.frame.DataFrame) -> pandas.core.frame.DataFrame:
     """
     Ranks the remaining possible letters (from the english alphabet) based on the frequency that they occur in the possible words
     :param board: the current state of the hangman game
@@ -99,7 +99,7 @@ def rankPossibleGuessesByFrequency(board: str, usedLetters: str, possibleWords: 
     return freqs
 
 
-def rankPossibleGuessesByOccurrences(board: str, usedLetters: str, possibleWords: list) -> pandas.core.frame.DataFrame:
+def rankPossibleGuessesByOccurrences(board: str, usedLetters: str, possibleWords: pandas.core.frame.DataFrame) -> pandas.core.frame.DataFrame:
     """
     Ranks the remaining possible letters by number of words they appear in
     :param board: the current state of the hangman game
@@ -145,7 +145,7 @@ def rankPossibleGuessesByOccurrences(board: str, usedLetters: str, possibleWords
     return occurrences
 
 
-def rankPossibleGuessesByAbsence(board: str, usedLetters: str, possibleWords: list) -> pandas.core.frame.DataFrame:
+def rankPossibleGuessesByAbsence(board: str, usedLetters: str, possibleWords: pandas.core.frame.DataFrame) -> pandas.core.frame.DataFrame:
     """
     Ranks the remaining possible letters by number of words they do not appear in
     :param board: the current state of the hangman game
@@ -167,7 +167,7 @@ def rankPossibleGuessesByAbsence(board: str, usedLetters: str, possibleWords: li
     return absences
 
 
-def rankPossibleGuessesByAvgOccurrenceInWord(board: str, usedLetters: str, possibleWords: list) -> pandas.core.frame.DataFrame:
+def rankPossibleGuessesByAvgOccurrenceInWord(board: str, usedLetters: str, possibleWords: pandas.core.frame.DataFrame) -> pandas.core.frame.DataFrame:
     """
     Ranks the remaining possible letters by the average number of times they appear on a word when they appear
     :param board: the current state of the hangman game
@@ -187,7 +187,7 @@ def rankPossibleGuessesByAvgOccurrenceInWord(board: str, usedLetters: str, possi
     return avgOccurrenceInWord
 
 
-def rankPossibleGuessesByPositionsInWord(board: str, usedLetters: str, possibleWords: list) -> pandas.core.frame.DataFrame:
+def rankPossibleGuessesByPositionsInWord(board: str, usedLetters: str, possibleWords: pandas.core.frame.DataFrame) -> pandas.core.frame.DataFrame:
     """
     Ranks the remaining possible letters by the number of different positions they appear in
     :param board: the current state of the hangman game
@@ -217,7 +217,7 @@ def rankPossibleGuessesByPositionsInWord(board: str, usedLetters: str, possibleW
     return ranks
 
 
-def getGuess(heuristic: str, board: str, usedLetters: str, dictionary: pandas.core.frame.DataFrame) -> str:
+def getGuess(heuristic: str, board: str, usedLetters: str, dictionary: pandas.core.frame.DataFrame) -> (str, str):
     """
     Retrieves a guess based on the heuristic, current board, used letters, and dictionary
     :param heuristic: the name of the heuristic to use
