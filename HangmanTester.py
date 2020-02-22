@@ -115,13 +115,8 @@ def runTestsOnSectionOfDict(words, heuristic, outFileName, start, finish):
             word = word[0]
             gameResult = testGame(word, words, heuristic)
             print(gameResult)
-            #appendGameToOutFile(gameNumber, gameResult)
             outFile.write("\n" + str(gameNumber) + ',' + gameResult[0] + ',' + str(gameResult[1]) + ',' + str(gameResult[2]) + ',' + str(gameResult[3]) + ',' + str(gameResult[4]) + ',' + str(gameResult[5]))
 
-'''
-def appendGameToOutFile(gameNumber: int, gameResult: (str, list, str), outFile):
-    outFile.write("\n" + str(gameNumber) + ',' + gameResult[0] + ',' + str(gameResult[1]) + ',' + str(gameResult[2]) + ',' + str(gameResult[3]) + ',' + str(gameResult[4]) + ',' + str(gameResult[5]))
-'''
 
 dictFrame = HangmanSolver.loadDictionary(r"dictionaries/Collins Scrabble Words (2019).txt")
 

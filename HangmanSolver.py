@@ -173,7 +173,7 @@ def rankPossibleGuessesByAvgOccurrenceInWord(board: str, usedLetters: str, possi
     :param board: the current state of the hangman game
     :param usedLetters: list of letters that have been used already, both correct and incorrect
     :param possibleWords: list of words the hangman word is believed to be from/in
-    :return: avgOccurrenceInWord: avgerage number of times a letter appears in a word when it appears
+    :return: avgOccurrenceInWord: average number of times a letter appears in a word when it appears
     """
     possibleLetters = findPossibleLetters(possibleWords, usedLetters)
 
