@@ -1,8 +1,8 @@
 import pandas
-
 from HangmanGame import HangmanGame
 import OutFileEvaluator
 import HangmanSolver
+from multiprocessing import Pool
 
 
 def testGame(word: str, words: pandas.core.frame.DataFrame, heuristic: str) -> (str, int, int, int, int, str):
@@ -53,6 +53,7 @@ def testGame(word: str, words: pandas.core.frame.DataFrame, heuristic: str) -> (
 
 
 def makeDictFromDict(words):
+    print("WIP")
     results = HangmanSolver.findLetterTotals(words)
 
     totals = results[0]
@@ -102,7 +103,7 @@ def runTestsOnDict(words: pandas.core.frame.DataFrame, heuristic: str, outFileNa
             outFile.write("\n" + str(gameNumber) + ',' + gameResult[0] + ',' + str(gameResult[1]) + ',' + str(gameResult[2]) + ',' + str(gameResult[3]) + ',' + str(gameResult[4]) + ',' + str(gameResult[5]))
 
 
-def runTestsOnSectionOfDict(words: pandas.core.frame.DataFrame, heuristic: str, outFileName: str, start: int, finish: int):
+def runTestsOnSectionOfDict(words: pandas.core.frame.DataFrame, heuristic: str, outFileName: str, start: int, finish: int) -> str:
     """
     Runs the "testGame" function on every word in the range provided. The words are indexed in the order they appear in the dictionary. If the file already exists, it will pick up where it left off.
     :param words: the dictionary the secret is (believed) to be from
@@ -110,6 +111,7 @@ def runTestsOnSectionOfDict(words: pandas.core.frame.DataFrame, heuristic: str, 
     :param outFileName: name of the file that the program should append results to
     :param start: the index of the beginning of the range; includes this word
     :param finish: the index of the end of the range; this word will not be included
+    :return: the completed game details each in its own line
     """
     try:
         print("loading existing out file")
@@ -128,6 +130,7 @@ def runTestsOnSectionOfDict(words: pandas.core.frame.DataFrame, heuristic: str, 
     print("starting at:", start+1, words.values[start])
     print("stopping at:", finish, words.values[finish-1])
 
+    tests = ""
     with open(outFileName, "a") as outFile:
         wordVals = words.values[gameNumber:]
 
@@ -138,14 +141,68 @@ def runTestsOnSectionOfDict(words: pandas.core.frame.DataFrame, heuristic: str, 
             word = word[0]
             gameResult = testGame(word, words, heuristic)
             print(gameResult)
-            outFile.write("\n" + str(gameNumber) + ',' + gameResult[0] + ',' + str(gameResult[1]) + ',' + str(gameResult[2]) + ',' + str(gameResult[3]) + ',' + str(gameResult[4]) + ',' + str(gameResult[5]))
+            tests += "\n" + str(gameNumber) + ',' + gameResult[0] + ',' + str(gameResult[1]) + ',' + str(gameResult[2]) + ',' + str(gameResult[3]) + ',' + str(gameResult[4]) + ',' + str(gameResult[5])
+    return tests
 
 
-dictFrame = HangmanSolver.loadDictionary(r"dictionaries/Collins Scrabble Words (2019).txt")
+def runTestsOnSectionMulti(words: pandas.core.frame.DataFrame, heuristic: str, outFileName: str, start: int, finish: int) -> str:
+    print("starting chunk -> words", start, "to", finish,)
+    gameNumber = start
+    chunkLength = finish - start
+    tests = ""
+    lastProgress = 0
+    with open(outFileName, "a") as outFile:
+        wordVals = words.values[gameNumber:]
 
-# print(testGame("zwitterionic", dictFrame, "positionsInWord"))
-# HangmanSolver.runExample()
-# makeDictFromDict(dictFrame)
-# runTestsOnDict(dictFrame, "positionsInWord", r"outFiles/positionsInWord_Collins Scrabble Words (2019).csv")
-runTestsOnSectionOfDict(dictFrame, "positionsInWord", r"outFiles/positionsInWord_Collins Scrabble Words (2019).csv", 71613, 71620)
-# OutFileEvaluator.aggregateOutFileData(r"outFiles/positionsInWord_Collins Scrabble Words (2019).csv", r"aggFiles/aggData_positionsInWord_Collins Scrabble Words (2019).csv")
+        for word in wordVals:
+            gameNumber += 1
+            progress = int(100.0 / float(chunkLength) * float(gameNumber - start))
+            if progress != lastProgress:
+                print("chunk with words", start, "to", finish, "is", progress, "% done")
+            lastProgress = progress
+            if gameNumber >= finish:
+                break
+            word = word[0]
+            gameResult = testGame(word, words, heuristic)
+            #print(gameResult)
+            tests += "\n" + str(gameNumber) + ',' + gameResult[0] + ',' + str(gameResult[1]) + ',' + str(gameResult[2]) + ',' + str(gameResult[3]) + ',' + str(gameResult[4]) + ',' + str(gameResult[5])
+    return tests
+
+def runTestsOnDictMulti(words, heuristic, outFileName, processCount):
+    wordCount = len(words)
+    chunkSize = int(wordCount/processCount)
+
+    print("words", wordCount)
+    print("chunk size", chunkSize)
+
+    # assign chunks to processes
+    chunkPool = Pool(processes=processCount)
+    parameters = []
+    for i in range(0, processCount):
+        start = i*chunkSize
+        if i < 5:
+            finish = (i+1)*chunkSize
+        else:
+            finish = wordCount
+        print("chunk:", i, "-> words", start, "to", finish)
+        parameters.append((words, heuristic, outFileName, start, finish))
+    print("assigning chunks to processes")
+    chunks = chunkPool.starmap(runTestsOnSectionMulti, parameters)
+    #print(chunks)
+    with open(outFileName, "w") as outFile:
+        outFile.write("gameNumber,word,wordLength,guessCount,correctGuessCount,incorrectGuessCount,usedLetters"+chunks)
+
+
+if __name__ == '__main__':
+    #freeze_support()
+
+    dictFrame = HangmanSolver.loadDictionary(r"dictionaries/Collins Scrabble Words (2019).txt")
+    print("loaded", len(dictFrame), "words\n")
+
+    # print(testGame("zwitterionic", dictFrame, "positionsInWord"))
+    # HangmanSolver.runExample()
+    # makeDictFromDict(dictFrame)
+    # runTestsOnDict(dictFrame, "positionsInWord", r"outFiles/positionsInWord_Collins Scrabble Words (2019).csv")
+    # runTestsOnSectionOfDict(dictFrame, "positionsInWord", r"outFiles/positionsInWord_Collins Scrabble Words (2019).csv", 71613, 71620)
+    # OutFileEvaluator.aggregateOutFileData(r"outFiles/positionsInWord_Collins Scrabble Words (2019).csv", r"aggFiles/aggData_positionsInWord_Collins Scrabble Words (2019).csv")
+    runTestsOnDictMulti(dictFrame, "positionsInWord", r"outFiles/positionsInWord_Collins Scrabble Words (2019).csv", 6)
