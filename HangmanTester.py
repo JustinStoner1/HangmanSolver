@@ -180,7 +180,7 @@ def runTestsOnDictMulti(words, heuristic, outFileName, processCount):
     parameters = []
     for i in range(0, processCount):
         start = i*chunkSize
-        if i < 5:
+        if i < processCount - 1:
             finish = (i+1)*chunkSize
         else:
             finish = wordCount
