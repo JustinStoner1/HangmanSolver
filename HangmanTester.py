@@ -158,7 +158,7 @@ def runTestsOnSectionMulti(words: pandas.core.frame.DataFrame, heuristic: str, o
             gameNumber += 1
             progress = int(100.0 / float(chunkLength) * float(gameNumber - start))
             if progress != lastProgress:
-                print("chunk with words", start, "to", finish, "is", progress, "% done")
+                print("chunk -> words", start, "to", finish, "is", progress, "% done")
             lastProgress = progress
             if gameNumber >= finish:
                 break
@@ -166,6 +166,7 @@ def runTestsOnSectionMulti(words: pandas.core.frame.DataFrame, heuristic: str, o
             gameResult = testGame(word, words, heuristic)
             #print(gameResult)
             tests += "\n" + str(gameNumber) + ',' + gameResult[0] + ',' + str(gameResult[1]) + ',' + str(gameResult[2]) + ',' + str(gameResult[3]) + ',' + str(gameResult[4]) + ',' + str(gameResult[5])
+    print("finished chunk -> words", start, "to", finish, )
     return tests
 
 def runTestsOnDictMulti(words, heuristic, outFileName, processCount):
@@ -183,14 +184,17 @@ def runTestsOnDictMulti(words, heuristic, outFileName, processCount):
         if i < processCount - 1:
             finish = (i+1)*chunkSize
         else:
-            finish = wordCount
+            finish = wordCount+1
         print("chunk:", i, "-> words", start, "to", finish)
         parameters.append((words, heuristic, outFileName, start, finish))
     print("assigning chunks to processes")
     chunks = chunkPool.starmap(runTestsOnSectionMulti, parameters)
     #print(chunks)
     with open(outFileName, "w") as outFile:
-        outFile.write("gameNumber,word,wordLength,guessCount,correctGuessCount,incorrectGuessCount,usedLetters"+chunks)
+        chunkStrings = ""
+        for chunk in chunks:
+            chunkStrings += chunk
+        outFile.write("gameNumber,word,wordLength,guessCount,correctGuessCount,incorrectGuessCount,usedLetters"+chunkStrings)
 
 
 if __name__ == '__main__':
@@ -199,10 +203,10 @@ if __name__ == '__main__':
     dictFrame = HangmanSolver.loadDictionary(r"dictionaries/Collins Scrabble Words (2019).txt")
     print("loaded", len(dictFrame), "words\n")
 
-    # print(testGame("zwitterionic", dictFrame, "positionsInWord"))
+    # print(testGame("zzzs", dictFrame, "positionsInWord"))
     # HangmanSolver.runExample()
     # makeDictFromDict(dictFrame)
     # runTestsOnDict(dictFrame, "positionsInWord", r"outFiles/positionsInWord_Collins Scrabble Words (2019).csv")
     # runTestsOnSectionOfDict(dictFrame, "positionsInWord", r"outFiles/positionsInWord_Collins Scrabble Words (2019).csv", 71613, 71620)
-    # OutFileEvaluator.aggregateOutFileData(r"outFiles/positionsInWord_Collins Scrabble Words (2019).csv", r"aggFiles/aggData_positionsInWord_Collins Scrabble Words (2019).csv")
-    runTestsOnDictMulti(dictFrame, "positionsInWord", r"outFiles/positionsInWord_Collins Scrabble Words (2019).csv", 6)
+    OutFileEvaluator.aggregateOutFileData(r"outFiles/positionsInWord_Collins Scrabble Words (2019).csv", r"aggFiles/aggData_positionsInWord_Collins Scrabble Words (2019).csv")
+    # runTestsOnDictMulti(dictFrame, "positionsInWord", r"outFiles/positionsInWord_Collins Scrabble Words (2019).csv", 6)
