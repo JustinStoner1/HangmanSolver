@@ -53,6 +53,10 @@ def testGame(word: str, words: pandas.core.frame.DataFrame, heuristic: str) -> (
 
 
 def makeDictFromDict(words):
+    """
+    Work in progress for creating dictionaries by selecting certain words
+    :param words: the base dictionary
+    """
     print("WIP")
     results = HangmanSolver.findLetterTotals(words)
 
@@ -146,6 +150,15 @@ def runTestsOnSectionOfDict(words: pandas.core.frame.DataFrame, heuristic: str, 
 
 
 def runTestsOnSectionMulti(words: pandas.core.frame.DataFrame, heuristic: str, outFileName: str, start: int, finish: int) -> str:
+    """
+    Runs the "testGame" function on every word in the range provided. The words are indexed in the order they appear in the dictionary. If the file already exists, it will pick up where it left off.
+    :param words: the dictionary the secret is (believed) to be from
+    :param heuristic: the strategy the function will use to make guesses
+    :param outFileName: name of the file that the program should append results to
+    :param start: the index of the beginning of the range; includes this word
+    :param finish: the index of the end of the range; this word will not be included
+    :return: the completed game details each in its own line
+    """
     print("starting chunk -> words", start, "to", finish,)
     gameNumber = start
     chunkLength = finish - start
@@ -169,7 +182,15 @@ def runTestsOnSectionMulti(words: pandas.core.frame.DataFrame, heuristic: str, o
     print("finished chunk -> words", start, "to", finish, )
     return tests
 
+
 def runTestsOnDictMulti(words, heuristic, outFileName, processCount):
+    """
+    Runs the "testGame" function on every word in the dictionary. Spawns the number of processes as defined by the param: processCount and distributes an evenly sized portion of the words dataframe for it to test
+    :param words: the dictionary the secret is (believed) to be from
+    :param heuristic: the strategy the function will use to make guesses
+    :param outFileName: name of the file that the program should append results to
+    :param processCount: the number of processes to use in the multiprocessing (determines the size of the chunk each process will test
+    """
     wordCount = len(words)
     chunkSize = int(wordCount/processCount)
 
