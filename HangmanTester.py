@@ -1,3 +1,5 @@
+import argparse
+
 import pandas
 from HangmanGame import HangmanGame
 import OutFileEvaluator
@@ -221,13 +223,38 @@ def runTestsOnDictMulti(words, heuristic, outFileName, processCount):
 if __name__ == '__main__':
     #freeze_support()
 
-    dictFrame = HangmanSolver.loadDictionary(r"dictionaries/Collins Scrabble Words (2019).txt")
-    print("loaded", len(dictFrame), "words\n")
+    parser = argparse.ArgumentParser(description="Hangman heuristics and game playing")
+    parser.add_argument("-m", "--mode", help="what to do with the input", type=str)
+    parser.add_argument("-w", "--word", help="secret word, determines the board", type=str)
+    parser.add_argument("-d", "--dictionary", help="dictionary to search through", type=str)
+    parser.add_argument("-s", "--strategy", help="guessing heuristic to use", type=str)
+    parser.add_argument("-of", "--outFile", help="relative location/name of file where bulk dictionary testing results will be written/appended to", type=str)
+    parser.add_argument("-af", "--aggFile", help="relative location/name of file where aggregated data from the outFile will be written", type=str)
+    parser.add_argument("-pc", "--processCount", help="number of processes to spawn when using multiprocessing", type=str)
+    args = parser.parse_args()
+
+    dictFrame = HangmanSolver.loadDictionary(args.dictionary)
+    print("loaded", len(dictFrame), "words from", args.dictionary)
+    if args.mode == "solve":
+        print(testGame(args.word, dictFrame, args.strategy))
+    elif args.mode == "testDictionary":
+        print("testing all words in", args.dictionary, "with", args.strategy)
+        runTestsOnDict(dictFrame, args.strategy, args.outFile)
+        print("tested all words in", args.dictionary, "with", args.strategy)
+        OutFileEvaluator.aggregateOutFileData(args.outFile, args.aggFile)
+    elif args.mode == "testDictionaryW/Multiprocessing":
+        print("testing all words in", args.dictionary, "with", args.strategy, "using multiprocessing")
+        runTestsOnDictMulti(dictFrame, args.strategy, args.outFile, args.processCount)
+        print("tested all words in", args.dictionary, "with", args.strategy, "using multiprocessing")
+        OutFileEvaluator.aggregateOutFileData(args.outFile, args.aggFile)
+
+    #dictFrame = HangmanSolver.loadDictionary(r"dictionaries/Collins Scrabble Words (2019).txt")
+    #print("loaded", len(dictFrame), "words\n")
 
     # print(testGame("zzzs", dictFrame, "positionsInWord"))
     # HangmanSolver.runExample()
     # makeDictFromDict(dictFrame)
     # runTestsOnDict(dictFrame, "positionsInWord", r"outFiles/positionsInWord_Collins Scrabble Words (2019).csv")
     # runTestsOnSectionOfDict(dictFrame, "positionsInWord", r"outFiles/positionsInWord_Collins Scrabble Words (2019).csv", 71613, 71620)
-    OutFileEvaluator.aggregateOutFileData(r"outFiles/positionsInWord_Collins Scrabble Words (2019).csv", r"aggFiles/aggData_positionsInWord_Collins Scrabble Words (2019).csv")
+    # OutFileEvaluator.aggregateOutFileData(r"outFiles/positionsInWord_Collins Scrabble Words (2019).csv", r"aggFiles/aggData_positionsInWord_Collins Scrabble Words (2019).csv")
     # runTestsOnDictMulti(dictFrame, "positionsInWord", r"outFiles/positionsInWord_Collins Scrabble Words (2019).csv", 6)
